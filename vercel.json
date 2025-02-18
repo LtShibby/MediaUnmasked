@@ -4,24 +4,29 @@
   "outputDirectory": "frontend/dist",
   "builds": [
     {
-      "src": "api/analyze.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxDuration": 10
-      }
+      "src": "frontend/dist/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/*.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/analyze.py"
+      "dest": "api/analyze.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1"
     },
     {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "frontend/dist/index.html"
     }
   ]
 } 
