@@ -4,17 +4,29 @@ from pydantic import BaseModel, HttpUrl
 from typing import List, Optional
 from ..analyzers.bias_analyzer import BiasAnalyzer
 from ..scrapers.article_scraper import ArticleScraper
+import os
 
-app = FastAPI(title="MediaUnmasked API")
+# Create FastAPI app with /api prefix for Vercel
+app = FastAPI(title="MediaUnmasked API", root_path="/api")
 
-# Enable CORS for frontend with more permissive settings
+# Enable CORS with environment-aware origins
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+]
+
+# Add production domain if available
+if production_domain := os.getenv("VERCEL_URL"):
+    ALLOWED_ORIGINS.append(f"https://{production_domain}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],  # Add all possible Vite ports
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-    expose_headers=["*"],  # Exposes all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Initialize our analyzers

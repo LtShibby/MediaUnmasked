@@ -16,13 +16,19 @@
   ],
   "routes": [
     {
+      "src": "/api/analyze",
+      "dest": "src/mediaunmasked/web/api.py"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "src/mediaunmasked/web/api.py"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "frontend/dist/$1",
-      "continue": true
+      "dest": "/index.html"
     }
   ]
 } 
