@@ -10,8 +10,7 @@
   },
   "routes": [
     {
-      "src": "/api/analyze",
-      "methods": ["POST"],
+      "src": "/api/(.*)",
       "dest": "/api/analyze.py"
     },
     {

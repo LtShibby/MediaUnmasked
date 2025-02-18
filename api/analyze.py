@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/api")
+@app.get("/")
 async def root():
     return {"message": "API is working"}
 
@@ -50,7 +50,7 @@ def scrape_article(url: str) -> dict:
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to scrape article: {str(e)}")
 
-@app.post("/api/analyze")
+@app.post("/analyze")
 async def analyze_article(request: ArticleRequest):
     try:
         article = scrape_article(str(request.url))

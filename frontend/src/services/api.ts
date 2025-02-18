@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.PROD 
-  ? '/api'  // Production API path
+  ? window.location.origin  // Use the same domain as frontend in production
   : 'http://localhost:8000'; // Development API path
 
 export interface AnalysisResponse {
@@ -13,7 +13,7 @@ export interface AnalysisResponse {
 
 export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {
   try {
-    const response = await fetch(`${API_URL}/analyze`, {
+    const response = await fetch(`${API_URL}/api/analyze`, {  // Add /api prefix
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
