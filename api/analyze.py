@@ -50,7 +50,8 @@ class AnalysisResponse(BaseModel):
     content: str
     sentiment: str
     bias: str
-    confidence_score: float
+    bias_score: float
+    bias_percentage: float
     flagged_phrases: List[str]
     media_score: MediaScore
 
@@ -96,7 +97,8 @@ async def analyze_article(request: ArticleRequest) -> AnalysisResponse:
             "content": str(article['content']),
             "sentiment": str(analysis['details']['sentiment_analysis']['sentiment']),
             "bias": str(analysis['details']['bias_analysis']['bias']),
-            "confidence_score": float(analysis['details']['bias_analysis']['confidence_score']),
+            "bias_score": float(analysis['details']['bias_analysis']['bias_score']),
+            "bias_percentage": float(analysis['details']['bias_analysis']['bias_percentage']),
             "flagged_phrases": list(analysis['details']['sentiment_analysis']['flagged_phrases']),
             "media_score": {
                 "media_unmasked_score": float(analysis['media_unmasked_score']),
@@ -113,7 +115,8 @@ async def analyze_article(request: ArticleRequest) -> AnalysisResponse:
                     },
                     "bias_analysis": {
                         "bias": str(analysis['details']['bias_analysis']['bias']),
-                        "confidence_score": float(analysis['details']['bias_analysis']['confidence_score'])
+                        "bias_score": float(analysis['details']['bias_analysis']['bias_score']),
+                        "bias_percentage": float(analysis['details']['bias_analysis']['bias_percentage'])
                     },
                     "evidence_analysis": {
                         "evidence_based_score": float(analysis['details']['evidence_analysis']['evidence_based_score'])
@@ -142,7 +145,8 @@ async def debug_response():
         "content": "Test content",
         "sentiment": "Neutral",
         "bias": "Neutral",
-        "confidence_score": 0.75,  # Note: 0-1 scale
+        "bias_score": 0.75,  # Note: 0-1 scale
+        "bias_percentage": 0,
         "flagged_phrases": ["test phrase"],
         "media_score": {
             "media_unmasked_score": 75.5,
@@ -159,7 +163,8 @@ async def debug_response():
                 },
                 "bias_analysis": {
                     "bias": "Neutral",
-                    "confidence_score": 0.75
+                    "bias_score": 0.75,
+                    "bias_percentage": 0
                 },
                 "evidence_analysis": {
                     "evidence_based_score": 80

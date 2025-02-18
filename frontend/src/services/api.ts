@@ -14,7 +14,8 @@ export interface MediaScoreDetails {
   };
   bias_analysis: {
     bias: string;
-    confidence_score: number;
+    bias_score: number;
+    bias_percentage: number;
   };
   evidence_analysis: {
     evidence_based_score: number;
@@ -32,7 +33,8 @@ export interface AnalysisResponse {
   content: string;
   sentiment: string;
   bias: string;
-  confidence_score: number;
+  bias_score: number;
+  bias_percentage: number;
   flagged_phrases: string[];
   media_score: MediaScore;
 }
