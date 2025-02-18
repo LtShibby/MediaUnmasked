@@ -11,8 +11,7 @@
       "config": {
         "distDir": "dist",
         "buildCommand": "cd frontend && npm install && npm run build"
-      },
-      "output": "frontend/dist"
+      }
     }
   ],
   "routes": [
