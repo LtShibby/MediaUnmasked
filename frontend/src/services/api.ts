@@ -1,4 +1,7 @@
-// Remove unused API_URL since we're using mock data
+const API_URL = import.meta.env.PROD 
+  ? '/api'  // Production API path
+  : 'http://localhost:8000'; // Development API path
+
 export interface AnalysisResponse {
   headline: string;
   content: string;
@@ -8,14 +11,26 @@ export interface AnalysisResponse {
   flagged_phrases: string[];
 }
 
-export const analyzeArticle = async (_url: string): Promise<AnalysisResponse> => {
-  // Added underscore to url parameter to indicate it's intentionally unused
-  return {
-    headline: "Sample Article",
-    content: "This is a sample article content for testing the frontend deployment.",
-    sentiment: "Neutral",
-    bias: "Neutral",
-    confidence_score: 0.5,
-    flagged_phrases: ["sample phrase"]
-  };
+export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {
+  try {
+    const response = await fetch(`${API_URL}/analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to analyze article');
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Analysis failed: ${error.message}`);
+    }
+    throw new Error('An unexpected error occurred');
+  }
 }; 

@@ -3,17 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 from typing import List
 import os
-import requests
+import sys
 from bs4 import BeautifulSoup
+import requests
 
+# Initialize FastAPI app
 app = FastAPI()
 
 # Enable CORS
-ALLOWED_ORIGINS = ["*"]  # Allow all origins for testing
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],  # Update this with your frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,10 +29,10 @@ class ArticleRequest(BaseModel):
 class AnalysisResponse(BaseModel):
     headline: str
     content: str
-    sentiment: str = "Neutral"  # Placeholder
-    bias: str = "Neutral"       # Placeholder
-    confidence_score: float = 0.5
-    flagged_phrases: List[str] = []
+    sentiment: str
+    bias: str
+    confidence_score: float
+    flagged_phrases: List[str]
 
 def scrape_article(url: str) -> dict:
     try:
@@ -40,7 +40,6 @@ def scrape_article(url: str) -> dict:
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Basic scraping logic
         headline = soup.find('h1').text if soup.find('h1') else "No headline found"
         content = ' '.join([p.text for p in soup.find_all('p')])
         
@@ -56,10 +55,14 @@ async def analyze_article(request: ArticleRequest):
     try:
         article = scrape_article(str(request.url))
         
-        # For now, return placeholder analysis
+        # For now, return simplified analysis
         return AnalysisResponse(
             headline=article["headline"],
-            content=article["content"]
+            content=article["content"],
+            sentiment="Neutral",
+            bias="Neutral",
+            confidence_score=0.5,
+            flagged_phrases=[]
         )
     except Exception as e:
         raise HTTPException(
