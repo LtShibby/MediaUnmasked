@@ -13,7 +13,7 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Back to allowing all origins as it was working before
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,7 +26,7 @@ class ArticleRequest(BaseModel):
 async def root():
     return {"message": "API is working"}
 
-@app.post("/analyze")
+@app.post("/api/analyze")
 async def analyze_article(request: ArticleRequest):
     try:
         logger.info(f"Received request to analyze URL: {request.url}")
