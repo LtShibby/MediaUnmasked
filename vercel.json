@@ -2,12 +2,15 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
-  "functions": {
-    "api/analyze.py": {
-      "memory": 1024,
-      "maxDuration": 10
+  "builds": [
+    {
+      "src": "api/analyze.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxDuration": 10
+      }
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -19,12 +22,6 @@
     {
       "src": "/(.*)",
       "dest": "/index.html"
-    }
-  ],
-  "builds": [
-    {
-      "src": "api/requirements.txt",
-      "use": "@vercel/python"
     }
   ]
 } 
