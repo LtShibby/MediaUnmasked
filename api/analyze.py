@@ -43,7 +43,28 @@ class AnalysisResponse(BaseModel):
     bias: str
     confidence_score: float
     flagged_phrases: List[str]
-    media_score: Dict[str, Any]
+    media_score: Dict[str, Any] = {
+        "media_unmasked_score": float,
+        "rating": str,
+        "details": {
+            "headline_analysis": {
+                "headline_vs_content_score": float,
+                "contradictory_phrases": List[str]
+            },
+            "sentiment_analysis": {
+                "sentiment": str,
+                "manipulation_score": float,
+                "flagged_phrases": List[str]
+            },
+            "bias_analysis": {
+                "bias": str,
+                "confidence_score": float
+            },
+            "evidence_analysis": {
+                "evidence_based_score": float
+            }
+        }
+    }
 
 def scrape_article(url: str) -> dict:
     try:
@@ -73,10 +94,11 @@ async def analyze_article(request: ArticleRequest):
         article = scrape_article(str(request.url))
         logger.info(f"Successfully scraped article with headline: {article['headline'][:50]}...")
         
-        # Use the real scoring algorithm
+        # Get full analysis using the scoring algorithm
         analysis = scorer.calculate_media_score(article["headline"], article["content"])
         logger.info(f"Analysis completed with score: {analysis['media_unmasked_score']}")
         
+        # Create response with all analysis details
         response = AnalysisResponse(
             headline=article["headline"],
             content=article["content"],
@@ -84,14 +106,36 @@ async def analyze_article(request: ArticleRequest):
             bias=analysis["details"]["bias_analysis"]["bias"],
             confidence_score=analysis["details"]["bias_analysis"]["confidence_score"],
             flagged_phrases=analysis["details"]["sentiment_analysis"]["flagged_phrases"],
-            media_score=analysis
+            media_score={
+                "media_unmasked_score": analysis["media_unmasked_score"],
+                "rating": analysis["rating"],
+                "details": {
+                    "headline_analysis": {
+                        "headline_vs_content_score": analysis["details"]["headline_analysis"]["headline_vs_content_score"],
+                        "contradictory_phrases": analysis["details"]["headline_analysis"]["contradictory_phrases"]
+                    },
+                    "sentiment_analysis": {
+                        "sentiment": analysis["details"]["sentiment_analysis"]["sentiment"],
+                        "manipulation_score": analysis["details"]["sentiment_analysis"]["manipulation_score"],
+                        "flagged_phrases": analysis["details"]["sentiment_analysis"]["flagged_phrases"]
+                    },
+                    "bias_analysis": {
+                        "bias": analysis["details"]["bias_analysis"]["bias"],
+                        "confidence_score": analysis["details"]["bias_analysis"]["confidence_score"]
+                    },
+                    "evidence_analysis": {
+                        "evidence_based_score": analysis["details"]["evidence_analysis"]["evidence_based_score"]
+                    }
+                }
+            }
         )
         
-        # Log the response
+        # Log response details
         logger.info("Preparing response with data:")
         logger.info(f"Headline: {response.headline[:50]}...")
         logger.info(f"Media Score: {response.media_score['media_unmasked_score']}")
         logger.info(f"Rating: {response.media_score['rating']}")
+        logger.info(f"Bias: {response.media_score['details']['bias_analysis']['bias']}")
         
         return response
     except Exception as e:
