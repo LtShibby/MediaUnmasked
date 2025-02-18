@@ -384,7 +384,7 @@ interface ModalProps {
   triggerRect: DOMRect | null;  // Add position of the trigger element
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, title, content, triggerRect }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, title, content }) => {
   if (!isOpen) return null;
 
   // Just handle scroll/resize for closing
@@ -461,9 +461,7 @@ const ScoreCard: FC<ScoreCardProps> = ({
   details, 
   color,
   explanation,
-  isModalOpen,
-  onModalOpen,
-  onModalClose
+  onModalOpen
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   
