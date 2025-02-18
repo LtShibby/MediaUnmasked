@@ -1,5 +1,4 @@
-const API_URL = 'https://mockapi.example.com';  // We'll update this later
-
+// Remove unused API_URL since we're using mock data
 export interface AnalysisResponse {
   headline: string;
   content: string;
@@ -9,8 +8,8 @@ export interface AnalysisResponse {
   flagged_phrases: string[];
 }
 
-export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {
-  // Return mock data for now
+export const analyzeArticle = async (_url: string): Promise<AnalysisResponse> => {
+  // Added underscore to url parameter to indicate it's intentionally unused
   return {
     headline: "Sample Article",
     content: "This is a sample article content for testing the frontend deployment.",
