@@ -1,6 +1,4 @@
-const API_URL = import.meta.env.PROD 
-  ? '/api'  // Production API path
-  : 'http://localhost:8000'; // Development API path
+const API_URL = 'https://mockapi.example.com';  // We'll update this later
 
 export interface AnalysisResponse {
   headline: string;
@@ -12,25 +10,13 @@ export interface AnalysisResponse {
 }
 
 export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {
-  try {
-    const response = await fetch(`${API_URL}/analyze`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Failed to analyze article');
-    }
-
-    return response.json();
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Analysis failed: ${error.message}`);
-    }
-    throw new Error('An unexpected error occurred');
-  }
+  // Return mock data for now
+  return {
+    headline: "Sample Article",
+    content: "This is a sample article content for testing the frontend deployment.",
+    sentiment: "Neutral",
+    bias: "Neutral",
+    confidence_score: 0.5,
+    flagged_phrases: ["sample phrase"]
+  };
 }; 
