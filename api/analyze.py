@@ -9,14 +9,7 @@ from bs4 import BeautifulSoup
 app = FastAPI()
 
 # Enable CORS
-ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-]
-
-if production_domain := os.getenv("VERCEL_URL"):
-    ALLOWED_ORIGINS.append(f"https://{production_domain}")
+ALLOWED_ORIGINS = ["*"]  # Allow all origins for testing
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +18,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/api")
+async def root():
+    return {"message": "API is working"}
 
 class ArticleRequest(BaseModel):
     url: HttpUrl
