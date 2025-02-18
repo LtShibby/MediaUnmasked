@@ -80,6 +80,7 @@ async def analyze_article(request: ArticleRequest) -> AnalysisResponse:
             "sentiment": str(analysis['details']['sentiment_analysis']['sentiment']),
             "bias": str(analysis['details']['bias_analysis']['bias']),
             "bias_score": float(analysis['details']['bias_analysis']['bias_score']),
+            "bias_percentage": float(analysis['details']['bias_analysis']['bias_percentage']),
             "flagged_phrases": list(analysis['details']['sentiment_analysis']['flagged_phrases']),
             "media_score": {
                 "media_unmasked_score": float(analysis['media_unmasked_score']),
@@ -96,7 +97,8 @@ async def analyze_article(request: ArticleRequest) -> AnalysisResponse:
                     },
                     "bias_analysis": {
                         "bias": str(analysis['details']['bias_analysis']['bias']),
-                        "bias_score": float(analysis['details']['bias_analysis']['bias_score'])
+                        "bias_score": float(analysis['details']['bias_analysis']['bias_score']),
+                        "bias_percentage": float(analysis['details']['bias_analysis']['bias_percentage'])
                     },
                     "evidence_analysis": {
                         "evidence_based_score": float(analysis['details']['evidence_analysis']['evidence_based_score'])
