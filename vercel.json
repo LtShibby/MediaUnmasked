@@ -4,7 +4,7 @@
     "api/analyze.py": {
       "memory": 1024,
       "maxDuration": 10,
-      "runtime": "python3.11"
+      "runtime": "python@3.11"
     }
   },
   "routes": [
