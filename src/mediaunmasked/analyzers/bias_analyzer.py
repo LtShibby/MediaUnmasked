@@ -4,14 +4,20 @@ from dataclasses import dataclass
 import re
 from textblob import TextBlob
 import nltk
+import os
 from nltk.tokenize import sent_tokenize
 from nltk.tag import pos_tag
 
 from ..utils.logging_config import setup_logging
 
+# Define writable directory in /tmp
+NLTK_DATA_DIR = "/tmp/nltk_data"
+os.makedirs(NLTK_DATA_DIR, exist_ok=True)
+nltk.data.path.append(NLTK_DATA_DIR)
+
 # Download required NLTK data
-nltk.download('punkt', quiet=True)
-nltk.download('averaged_perceptron_tagger', quiet=True)
+nltk.download('punkt', download_dir=NLTK_DATA_DIR, quiet=True)
+nltk.download('averaged_perceptron_tagger', download_dir=NLTK_DATA_DIR, quiet=True)
 
 @dataclass
 class BiasAnalysisResult:
