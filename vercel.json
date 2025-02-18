@@ -1,9 +1,5 @@
 {
   "version": 2,
-  "framework": "python",
-  "pythonVersion": "3.9",
-  "buildCommand": "python -m spacy download en_core_web_sm",
-  "outputDirectory": "frontend/dist",
   "functions": {
     "api/analyze.py": {
       "memory": 1024,
