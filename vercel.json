@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
+  "buildCommand": "python -m spacy download en_core_web_sm",
   "outputDirectory": "frontend/dist",
   "functions": {
     "api/analyze.py": {
@@ -11,7 +11,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/analyze.py"
+      "dest": "api/index.py"
     },
     {
       "handle": "filesystem"
