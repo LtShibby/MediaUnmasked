@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:8000';
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? '/api'  // Production API path
+  : 'http://localhost:8000'; // Development API path
 
 export interface AnalysisResponse {
   headline: string;

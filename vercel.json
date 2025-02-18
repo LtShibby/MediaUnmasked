@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/mediaunmasked/web/api.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "buildCommand": "cd frontend && npm install && npm run build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/mediaunmasked/web/api.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1",
+      "continue": true
+    }
+  ]
+} 
