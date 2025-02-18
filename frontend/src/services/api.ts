@@ -1,4 +1,4 @@
-const API_URL = process.env.NODE_ENV === 'production' 
+const API_URL = import.meta.env.PROD 
   ? '/api'  // Production API path
   : 'http://localhost:8000'; // Development API path
 
