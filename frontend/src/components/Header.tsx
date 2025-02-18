@@ -1,10 +1,12 @@
 export const Header = () => {
   return (
-    <header className="bg-white shadow">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <h1 className="text-3xl font-bold text-gray-900">Media Bias Analyzer</h1>
-        <p className="mt-2 text-gray-600">
-          Analyze news articles for bias and sentiment using AI
+    <header className="py-6 mb-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Media Unmasked
+        </h1>
+        <p className="mt-2 text-lg text-gray-600">
+          Unmask media bias with AI-powered analysis
         </p>
       </div>
     </header>

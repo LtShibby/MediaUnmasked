@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { UrlInput } from './components/UrlInput'
 import { AnalysisResult } from './components/AnalysisResult'
 import { Header } from './components/Header'
-import { LoadingSpinner } from './components/LoadingSpinner'
 import { analyzeArticle, AnalysisResponse } from './services/api'
 
 function App() {
@@ -19,38 +18,32 @@ function App() {
       setAnalysis(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
+      setAnalysis(null);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="container mx-auto px-4 py-8">
+        <Header />
+        <main className="space-y-8">
           <UrlInput onAnalyze={handleAnalyze} isLoading={isLoading} />
           
           {error && (
-            <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md border border-red-300">
+            <div className="max-w-3xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
               {error}
             </div>
           )}
           
-          {isLoading && (
-            <div className="mt-8 flex justify-center">
-              <LoadingSpinner />
-            </div>
-          )}
-          
-          {analysis && !isLoading && (
+          {analysis && (
             <div className="mt-8">
               <AnalysisResult analysis={analysis} />
             </div>
           )}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   )
 }
