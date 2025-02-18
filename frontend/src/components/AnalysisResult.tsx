@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { AnalysisResponse } from '../services/api';
 
 interface Props {
@@ -6,23 +6,37 @@ interface Props {
 }
 
 export const AnalysisResult: FC<Props> = ({ analysis }) => {
-  console.log('Analysis prop:', analysis);
+  // Add detailed logging
+  console.log('=== Analysis Response Structure ===');
+  console.log('Raw analysis prop:', JSON.stringify(analysis, null, 2));  // Pretty print
+  console.log('Media score type:', typeof analysis.media_score);
+  console.log('All keys:', Object.keys(analysis));
   
-  // Check if media_score exists and has required properties
-  const hasMediaScore = analysis && 
-    analysis.media_score && 
-    typeof analysis.media_score.media_unmasked_score === 'number' &&
-    typeof analysis.media_score.rating === 'string';
-  
-  console.log('Has media score:', hasMediaScore);
-  console.log('Media score object:', analysis?.media_score);
-  
-  // Log individual properties
-  if (analysis?.media_score) {
-    console.log('Score:', analysis.media_score.media_unmasked_score);
-    console.log('Rating:', analysis.media_score.rating);
-    console.log('Details:', analysis.media_score.details);
-  }
+  // Memoize score calculations to prevent unnecessary recalculations
+  const scores = useMemo(() => {
+    console.log('Calculating scores from:', JSON.stringify(analysis.media_score, null, 2));
+    
+    const hasScore = Boolean(
+      analysis?.media_score?.media_unmasked_score && 
+      analysis?.media_score?.rating
+    );
+    console.log('Has media score:', hasScore, {
+      score: analysis?.media_score?.media_unmasked_score,
+      rating: analysis?.media_score?.rating
+    });
+    
+    return {
+      hasMediaScore: hasScore,
+      headlineScore: analysis?.media_score?.details?.headline_analysis?.headline_vs_content_score ?? 0,
+      evidenceScore: analysis?.media_score?.details?.evidence_analysis?.evidence_based_score ?? 0,
+      manipulationScore: analysis?.media_score?.details?.sentiment_analysis?.manipulation_score ?? 0,
+      biasScore: (analysis?.media_score?.details?.bias_analysis?.confidence_score ?? 0) * 100,
+    };
+  }, [analysis]);
+
+  console.log('Calculated scores:', scores);
+
+  if (!analysis) return null;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -30,59 +44,47 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
       <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-6">
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            {hasMediaScore ? (
-              <>Media Unmasked Score: {analysis.media_score.media_unmasked_score}%</>
+            {scores.hasMediaScore ? (
+              <>Media Unmasked Score: {analysis.media_score.media_unmasked_score.toFixed(1)}%</>
             ) : (
               'Analyzing Article...'
             )}
           </h2>
-          {hasMediaScore && (
+          {scores.hasMediaScore && (
             <p className="text-lg font-medium text-gray-600 mt-2">
               {analysis.media_score.rating}
             </p>
           )}
         </div>
 
-        {hasMediaScore ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Headline Analysis */}
-            <ScoreCard
-              title="Headline Analysis"
-              score={100 - analysis.media_score.details.headline_analysis.headline_vs_content_score}
-              details={analysis.media_score.details.headline_analysis.contradictory_phrases}
-              color="blue"
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ScoreCard
+            title="Headline Analysis"
+            score={100 - scores.headlineScore}
+            details={analysis.media_score?.details?.headline_analysis?.contradictory_phrases}
+            color="blue"
+          />
 
-            {/* Evidence Score */}
-            <ScoreCard
-              title="Evidence-Based Reporting"
-              score={analysis.media_score.details.evidence_analysis.evidence_based_score}
-              color="green"
-            />
+          <ScoreCard
+            title="Evidence-Based Reporting"
+            score={scores.evidenceScore}
+            color="green"
+          />
 
-            {/* Manipulation Score */}
-            <ScoreCard
-              title="Manipulation Detection"
-              score={100 - analysis.media_score.details.sentiment_analysis.manipulation_score}
-              details={analysis.media_score.details.sentiment_analysis.flagged_phrases}
-              color="amber"
-            />
+          <ScoreCard
+            title="Manipulation Detection"
+            score={100 - scores.manipulationScore}
+            details={analysis.media_score?.details?.sentiment_analysis?.flagged_phrases}
+            color="amber"
+          />
 
-            {/* Bias Score */}
-            <ScoreCard
-              title="Bias Analysis"
-              score={analysis.media_score.details.bias_analysis.confidence_score * 100}
-              details={[`Detected Bias: ${analysis.media_score.details.bias_analysis.bias}`]}
-              color="purple"
-            />
-          </div>
-        ) : (
-          <div className="flex justify-center items-center h-40">
-            <div className="animate-pulse text-gray-500">
-              Loading analysis...
-            </div>
-          </div>
-        )}
+          <ScoreCard
+            title="Bias Analysis"
+            score={scores.biasScore}
+            details={[`Detected Bias: ${analysis.media_score?.details?.bias_analysis?.bias}`]}
+            color="purple"
+          />
+        </div>
       </div>
 
       {/* Article Content */}
@@ -94,6 +96,7 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
   );
 };
 
+// Separate ScoreCard component for better organization
 interface ScoreCardProps {
   title: string;
   score: number;

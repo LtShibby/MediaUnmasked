@@ -2,6 +2,31 @@ const API_URL = import.meta.env.PROD
   ? window.location.origin  // Use the same domain as frontend in production
   : 'http://localhost:8000'; // Development API path
 
+export interface MediaScoreDetails {
+  headline_analysis: {
+    headline_vs_content_score: number;
+    contradictory_phrases: string[];
+  };
+  sentiment_analysis: {
+    sentiment: string;
+    manipulation_score: number;
+    flagged_phrases: string[];
+  };
+  bias_analysis: {
+    bias: string;
+    confidence_score: number;
+  };
+  evidence_analysis: {
+    evidence_based_score: number;
+  };
+}
+
+export interface MediaScore {
+  media_unmasked_score: number;
+  rating: string;
+  details: MediaScoreDetails;
+}
+
 export interface AnalysisResponse {
   headline: string;
   content: string;
@@ -9,28 +34,7 @@ export interface AnalysisResponse {
   bias: string;
   confidence_score: number;
   flagged_phrases: string[];
-  media_score: {
-    media_unmasked_score: number;
-    rating: string;
-    details: {
-      headline_analysis: {
-        headline_vs_content_score: number;
-        contradictory_phrases: string[];
-      };
-      sentiment_analysis: {
-        sentiment: string;
-        manipulation_score: number;
-        flagged_phrases: string[];
-      };
-      bias_analysis: {
-        bias: string;
-        confidence_score: number;
-      };
-      evidence_analysis: {
-        evidence_based_score: number;
-      };
-    };
-  };
+  media_score: MediaScore;
 }
 
 export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {

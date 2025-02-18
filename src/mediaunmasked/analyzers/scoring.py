@@ -96,30 +96,38 @@ class MediaScorer:
         }
 
     def analyze_bias(self, text: str) -> Dict[str, Any]:
-        """Detect bias using keyword analysis instead of ML."""
-        text_lower = text.lower()
-        
-        # Simple keyword-based bias detection
-        left_keywords = ['progressive', 'liberal', 'democrat', 'socialism']
-        right_keywords = ['conservative', 'republican', 'trump', 'freedom']
-        
-        left_count = sum(1 for word in left_keywords if word in text_lower)
-        right_count = sum(1 for word in right_keywords if word in text_lower)
-        
-        if left_count > right_count:
-            bias = "Leaning Left"
-            confidence = min((left_count - right_count) * 0.2, 1.0)
-        elif right_count > left_count:
-            bias = "Leaning Right"
-            confidence = min((right_count - left_count) * 0.2, 1.0)
-        else:
-            bias = "Neutral"
-            confidence = 0.5
-        
-        return {
-            "bias": bias,
-            "confidence_score": confidence
-        }
+        """Detect bias using keyword analysis."""
+        try:
+            text_lower = text.lower()
+            
+            # Simple keyword-based bias detection
+            left_keywords = ['progressive', 'liberal', 'democrat', 'socialism']
+            right_keywords = ['conservative', 'republican', 'trump', 'freedom']
+            
+            left_count = sum(1 for word in left_keywords if word in text_lower)
+            right_count = sum(1 for word in right_keywords if word in text_lower)
+            
+            if left_count > right_count:
+                bias = "Leaning Left"
+                confidence = min((left_count - right_count) * 0.2, 1.0)  # Scale to 0-1
+            elif right_count > left_count:
+                bias = "Leaning Right"
+                confidence = min((right_count - left_count) * 0.2, 1.0)  # Scale to 0-1
+            else:
+                bias = "Neutral"
+                confidence = 0.5
+            
+            return {
+                "bias": bias,
+                "confidence_score": confidence  # This should be 0-1
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in bias analysis: {str(e)}")
+            return {
+                "bias": "Error",
+                "confidence_score": 0
+            }
 
     def analyze_evidence(self, text: str) -> Dict[str, Any]:
         """Check for evidence-based reporting."""
@@ -139,40 +147,67 @@ class MediaScorer:
 
     def calculate_media_score(self, headline: str, content: str) -> Dict[str, Any]:
         """Calculate final media credibility score."""
-        headline_analysis = self.analyze_headline_content(headline, content)
-        sentiment_analysis = self.analyze_sentiment(content)
-        bias_analysis = self.analyze_bias(content)
-        evidence_analysis = self.analyze_evidence(content)
-        
-        headline_score = 1 - (headline_analysis["headline_vs_content_score"] / 100)
-        manipulation_score = 1 - (sentiment_analysis["manipulation_score"] / 100)
-        bias_score = 1 - (bias_analysis["confidence_score"] if bias_analysis["bias"] != "Neutral" else 0)
-        evidence_score = evidence_analysis["evidence_based_score"] / 100
-        
-        final_score = (
-            (headline_score * 0.3) +
-            (manipulation_score * 0.2) +
-            (bias_score * 0.2) +
-            (evidence_score * 0.3)
-        ) * 100
-        
-        if final_score >= 80:
-            rating = "Highly Trustworthy"
-        elif final_score >= 50:
-            rating = "Some Bias Present"
-        else:
-            rating = "Potentially Misleading"
-        
-        return {
-            "media_unmasked_score": round(final_score, 1),
-            "rating": rating,
-            "details": {
-                "headline_analysis": headline_analysis,
-                "sentiment_analysis": sentiment_analysis,
-                "bias_analysis": bias_analysis,
-                "evidence_analysis": evidence_analysis
+        try:
+            headline_analysis = self.analyze_headline_content(headline, content)
+            sentiment_analysis = self.analyze_sentiment(content)
+            bias_analysis = self.analyze_bias(content)
+            evidence_analysis = self.analyze_evidence(content)
+            
+            # Log intermediate results
+            logger.info("\n=== Raw Analysis Results ===")
+            logger.info(f"Headline Analysis: {headline_analysis}")
+            logger.info(f"Sentiment Analysis: {sentiment_analysis}")
+            logger.info(f"Bias Analysis: {bias_analysis}")
+            logger.info(f"Evidence Analysis: {evidence_analysis}")
+            
+            headline_score = 1 - (headline_analysis["headline_vs_content_score"] / 100)
+            manipulation_score = 1 - (sentiment_analysis["manipulation_score"] / 100)
+            bias_score = 1 - (bias_analysis["confidence_score"] if bias_analysis["bias"] != "Neutral" else 0)
+            evidence_score = evidence_analysis["evidence_based_score"] / 100
+            
+            final_score = (
+                (headline_score * 0.3) +
+                (manipulation_score * 0.2) +
+                (bias_score * 0.2) +
+                (evidence_score * 0.3)
+            ) * 100
+            
+            if final_score >= 80:
+                rating = "Highly Trustworthy"
+            elif final_score >= 50:
+                rating = "Some Bias Present"
+            else:
+                rating = "Potentially Misleading"
+            
+            result = {
+                "media_unmasked_score": round(final_score, 1),
+                "rating": rating,
+                "details": {
+                    "headline_analysis": headline_analysis,
+                    "sentiment_analysis": sentiment_analysis,
+                    "bias_analysis": bias_analysis,
+                    "evidence_analysis": evidence_analysis
+                }
             }
-        }
+            
+            # Log final result
+            logger.info("\n=== Final Score Result ===")
+            logger.info(f"Result: {result}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error calculating media score: {str(e)}")
+            return {
+                "media_unmasked_score": 0,
+                "rating": "Error",
+                "details": {
+                    "headline_analysis": {"headline_vs_content_score": 0, "contradictory_phrases": []},
+                    "sentiment_analysis": {"sentiment": "Error", "manipulation_score": 0, "flagged_phrases": []},
+                    "bias_analysis": {"bias": "Error", "confidence_score": 0},
+                    "evidence_analysis": {"evidence_based_score": 0}
+                }
+            }
 
     def _detect_manipulative_phrases(self, text: str) -> List[str]:
         """Detect potentially manipulative phrases."""
