@@ -59,18 +59,41 @@ class ArticleScraper:
 
     def _extract_politifact(self, soup: BeautifulSoup) -> Dict[str, str]:
         """Extract content from PolitiFact articles."""
-        headline = soup.find('h1', class_='article__title').get_text().strip() if soup.find('h1', class_='article__title') else ''
-        
-        content_div = soup.find('article', class_='article')
-        if content_div:
-            # Remove unwanted elements
-            for unwanted in content_div.find_all(['script', 'style', 'iframe', 'aside']):
-                unwanted.decompose()
-            content = ' '.join(p.get_text().strip() for p in content_div.find_all('p'))
-        else:
-            content = ''
+        try:
+            headline = soup.find('h1', class_='article__title')
+            if headline:
+                headline = headline.get_text().strip()
+            else:
+                headline = soup.find('h1')
+                headline = headline.get_text().strip() if headline else "No headline found"
             
-        return {"headline": headline, "content": content}
+            self.logger.info(f"Found headline: {headline}")
+            
+            content_div = soup.find('article', class_='article')
+            if content_div:
+                # Remove unwanted elements
+                for unwanted in content_div.find_all(['script', 'style', 'iframe', 'aside']):
+                    unwanted.decompose()
+                content = ' '.join(p.get_text().strip() for p in content_div.find_all('p'))
+            else:
+                # Try alternative content selectors
+                content_selectors = ['.article__text', '.m-textblock']
+                content = ''
+                for selector in content_selectors:
+                    content_elem = soup.select_one(selector)
+                    if content_elem:
+                        content = ' '.join(p.get_text().strip() for p in content_elem.find_all('p'))
+                        break
+                    
+            if not content:
+                self.logger.warning("No content found in article")
+                content = "No content found"
+            
+            return {"headline": headline, "content": content}
+            
+        except Exception as e:
+            self.logger.error(f"Error extracting PolitiFact content: {str(e)}")
+            return {"headline": "Error", "content": f"Failed to extract content: {str(e)}"}
 
     def scrape_article(self, url: str) -> Optional[Dict[str, str]]:
         """

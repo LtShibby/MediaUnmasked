@@ -2,6 +2,9 @@ from typing import List, Dict, Any
 from textblob import TextBlob
 import re
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MediaScorer:
     def __init__(self):
@@ -34,19 +37,39 @@ class MediaScorer:
 
     def analyze_headline_content(self, headline: str, content: str) -> Dict[str, Any]:
         """Compare headline and content for discrepancies using simpler methods."""
-        # Use basic text comparison instead of zero-shot classification
-        headline_words = set(headline.lower().split())
-        content_first_para = ' '.join(content.split('.')[:3]).lower()
-        
-        # Check if key headline words appear in first few sentences
-        word_matches = sum(1 for word in headline_words if word in content_first_para)
-        match_score = (word_matches / len(headline_words)) * 100
-        contradiction_score = 100 - match_score
-        
-        return {
-            "headline_vs_content_score": int(contradiction_score),
-            "contradictory_phrases": self._find_contradictions(headline, content)
-        }
+        try:
+            # Validate inputs
+            if not headline or not content:
+                return {
+                    "headline_vs_content_score": 100,  # Maximum discrepancy for empty content
+                    "contradictory_phrases": ["Empty headline or content"]
+                }
+
+            # Use basic text comparison instead of zero-shot classification
+            headline_words = set(headline.lower().split())
+            if not headline_words:  # Handle case where headline has no valid words
+                return {
+                    "headline_vs_content_score": 100,
+                    "contradictory_phrases": ["No valid words in headline"]
+                }
+
+            content_first_para = ' '.join(content.split('.')[:3]).lower()
+            
+            # Check if key headline words appear in first few sentences
+            word_matches = sum(1 for word in headline_words if word in content_first_para)
+            match_score = (word_matches / len(headline_words)) * 100
+            contradiction_score = 100 - match_score
+            
+            return {
+                "headline_vs_content_score": int(contradiction_score),
+                "contradictory_phrases": self._find_contradictions(headline, content)
+            }
+        except Exception as e:
+            logger.error(f"Error in headline analysis: {str(e)}")
+            return {
+                "headline_vs_content_score": 50,  # Neutral score for error cases
+                "contradictory_phrases": [f"Analysis error: {str(e)}"]
+            }
 
     def analyze_sentiment(self, text: str) -> Dict[str, Any]:
         """Analyze sentiment using TextBlob."""
