@@ -6,14 +6,14 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
-        "beautifulsoup4>=4.9.3",
-        "requests>=2.25.1",
-        "transformers>=4.5.0",
-        "torch>=1.8.0",
-        "spacy>=3.0.0",
-        "nltk>=3.6.0",
-        "fastapi>=0.68.0",
-        "uvicorn>=0.15.0",
+        "fastapi",
+        "uvicorn",
+        "beautifulsoup4",
+        "requests",
+        "pydantic",
+        "python-dotenv",
+        "textblob",
+        "numpy"
     ],
     extras_require={
         "dev": [

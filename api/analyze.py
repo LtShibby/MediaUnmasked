@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup
 import requests
 import logging
 
-# Add the src directory to Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+# Add src directory to Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from mediaunmasked.analyzers.scoring import MediaScorer
 
 # Initialize FastAPI app
