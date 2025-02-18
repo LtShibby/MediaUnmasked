@@ -3,22 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 from typing import Dict, Any
 import logging
-import sys
-import os
-
-# Add the src directory to Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
-
-from mediaunmasked.scrapers.article_scraper import ArticleScraper
-from mediaunmasked.analyzers.scoring import MediaScorer
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-scraper = ArticleScraper()
-scorer = MediaScorer()
 
 # Enable CORS
 app.add_middleware(
@@ -41,37 +31,44 @@ async def analyze_article(request: ArticleRequest):
     try:
         logger.info(f"Received request to analyze URL: {request.url}")
         
-        # Scrape the article
-        article = scraper.scrape_article(str(request.url))
-        if not article:
-            raise HTTPException(
-                status_code=400,
-                detail="Failed to scrape article content"
-            )
-            
-        logger.info(f"Successfully scraped article: {article['headline'][:50]}...")
-        
-        # Analyze the content using our scoring algorithm
-        analysis = scorer.calculate_media_score(article['headline'], article['content'])
-        logger.info(f"Analysis complete with score: {analysis['media_unmasked_score']}")
-        
-        # Construct response
-        response = {
-            "headline": article['headline'],
-            "content": article['content'],
-            "sentiment": analysis['details']['sentiment_analysis']['sentiment'],
-            "bias": analysis['details']['bias_analysis']['bias'],
-            "confidence_score": analysis['details']['bias_analysis']['confidence_score'],
-            "flagged_phrases": analysis['details']['sentiment_analysis']['flagged_phrases'],
-            "media_score": analysis
+        # Return a simple mock response
+        mock_response = {
+            "headline": "Test Headline",
+            "content": "Test content",
+            "sentiment": "Neutral",
+            "bias": "Neutral",
+            "confidence_score": 0.75,
+            "flagged_phrases": ["test phrase"],
+            "media_score": {
+                "media_unmasked_score": 75.5,
+                "rating": "Some Bias Present",
+                "details": {
+                    "headline_analysis": {
+                        "headline_vs_content_score": 20,
+                        "contradictory_phrases": ["Sample contradiction"]
+                    },
+                    "sentiment_analysis": {
+                        "sentiment": "Neutral",
+                        "manipulation_score": 30,
+                        "flagged_phrases": ["Sample manipulative phrase"]
+                    },
+                    "bias_analysis": {
+                        "bias": "Neutral",
+                        "confidence_score": 0.75
+                    },
+                    "evidence_analysis": {
+                        "evidence_based_score": 80
+                    }
+                }
+            }
         }
         
-        logger.info("Returning analysis results")
-        return response
+        logger.info("Returning mock response")
+        return mock_response
         
     except Exception as e:
         logger.error(f"Error in analyze endpoint: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Analysis failed: {str(e)}"
+            detail={"error": f"Analysis failed: {str(e)}"}
         ) 
