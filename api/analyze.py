@@ -3,13 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 from typing import List
 import os
-import sys
-
-# Add the src directory to Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
-
-from mediaunmasked.analyzers.bias_analyzer import BiasAnalyzer
-from mediaunmasked.scrapers.article_scraper import ArticleScraper
+import requests
+from bs4 import BeautifulSoup
 
 app = FastAPI()
 
@@ -31,40 +26,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize analyzers
-scraper = ArticleScraper()
-analyzer = BiasAnalyzer()
-
 class ArticleRequest(BaseModel):
     url: HttpUrl
 
 class AnalysisResponse(BaseModel):
     headline: str
     content: str
-    sentiment: str
-    bias: str
-    confidence_score: float
-    flagged_phrases: List[str]
+    sentiment: str = "Neutral"  # Placeholder
+    bias: str = "Neutral"       # Placeholder
+    confidence_score: float = 0.5
+    flagged_phrases: List[str] = []
+
+def scrape_article(url: str) -> dict:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Basic scraping logic
+        headline = soup.find('h1').text if soup.find('h1') else "No headline found"
+        content = ' '.join([p.text for p in soup.find_all('p')])
+        
+        return {
+            "headline": headline,
+            "content": content
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to scrape article: {str(e)}")
 
 @app.post("/api/analyze")
 async def analyze_article(request: ArticleRequest):
     try:
-        article = scraper.scrape_article(str(request.url))
-        if not article:
-            raise HTTPException(
-                status_code=400,
-                detail="Failed to fetch article. Please check if the URL is valid and accessible."
-            )
+        article = scrape_article(str(request.url))
         
-        result = analyzer.analyze(article['content'])
-        
+        # For now, return placeholder analysis
         return AnalysisResponse(
-            headline=article['headline'],
-            content=article['content'],
-            sentiment=result.sentiment,
-            bias=result.bias,
-            confidence_score=result.confidence_score,
-            flagged_phrases=result.flagged_phrases
+            headline=article["headline"],
+            content=article["content"]
         )
     except Exception as e:
         raise HTTPException(
