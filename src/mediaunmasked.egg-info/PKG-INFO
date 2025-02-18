@@ -1,0 +1,43 @@
+Metadata-Version: 2.2
+Name: mediaunmasked
+Version: 0.1.0
+Summary: AI-powered media watchdog for analyzing bias and fact-checking
+Home-page: https://github.com/yourusername/mediaunmasked
+Author: Your Name
+Author-email: your.email@example.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: beautifulsoup4>=4.9.3
+Requires-Dist: requests>=2.25.1
+Requires-Dist: transformers>=4.5.0
+Requires-Dist: torch>=1.8.0
+Requires-Dist: spacy>=3.0.0
+Requires-Dist: nltk>=3.6.0
+Requires-Dist: streamlit>=1.10.0
+Requires-Dist: plotly>=5.5.0
+Requires-Dist: fastapi>=0.68.0
+Requires-Dist: uvicorn>=0.15.0
+Requires-Dist: pydantic>=1.8.0
+Provides-Extra: dev
+Requires-Dist: pytest>=6.0; extra == "dev"
+Requires-Dist: black>=21.0; extra == "dev"
+Requires-Dist: flake8>=3.9.0; extra == "dev"
+Requires-Dist: mypy>=0.800; extra == "dev"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# MediaUnmasked
