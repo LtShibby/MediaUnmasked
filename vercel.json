@@ -1,16 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "runtime": "python3.9",
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
-  "buildCommand": "pip uninstall -y fastapi pydantic pydantic-core uvicorn && rm -rf /vercel/.cache/pip && pip install -r requirements.txt --no-cache-dir",
   "functions": {
     "api/analyze.py": {
       "memory": 1024,
@@ -18,16 +7,9 @@
     }
   },
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+    { "src": "/api/(.*)", "dest": "api/analyze.py" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "buildCommand": "pip uninstall -y fastapi pydantic pydantic-core uvicorn && rm -rf /vercel/.cache/pip && pip install -r requirements.txt --no-cache-dir"
 }
