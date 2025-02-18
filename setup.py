@@ -12,11 +12,8 @@ setup(
         "torch>=1.8.0",
         "spacy>=3.0.0",
         "nltk>=3.6.0",
-        "streamlit>=1.10.0",
-        "plotly>=5.5.0",
         "fastapi>=0.68.0",
         "uvicorn>=0.15.0",
-        "pydantic>=1.8.0",
     ],
     extras_require={
         "dev": [
