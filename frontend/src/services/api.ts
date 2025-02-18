@@ -42,6 +42,8 @@ export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => 
       headers: {
         'Content-Type': 'application/json',
       },
+      mode: 'cors',
+      credentials: 'omit',
       body: JSON.stringify({ url }),
     });
 
