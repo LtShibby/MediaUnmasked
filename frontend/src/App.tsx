@@ -14,10 +14,14 @@ function App() {
     setError(null);
     
     try {
+      console.log('Starting analysis for URL:', url);
       const result = await analyzeArticle(url);
+      console.log('Analysis result:', result);
       setAnalysis(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Analysis error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
       setAnalysis(null);
     } finally {
       setIsLoading(false);
@@ -32,8 +36,11 @@ function App() {
           <UrlInput onAnalyze={handleAnalyze} isLoading={isLoading} />
           
           {error && (
-            <div className="max-w-3xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-              {error}
+            <div className="max-w-3xl mx-auto">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 font-medium">Error</p>
+                <p className="text-red-600 mt-1 text-sm whitespace-pre-wrap">{error}</p>
+              </div>
             </div>
           )}
           

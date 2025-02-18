@@ -35,6 +35,8 @@ export interface AnalysisResponse {
 
 export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {
   try {
+    console.log('Sending request to:', `${API_URL}/api/analyze`);
+    
     const response = await fetch(`${API_URL}/api/analyze`, {
       method: 'POST',
       headers: {
@@ -43,16 +45,32 @@ export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => 
       body: JSON.stringify({ url }),
     });
 
+    const contentType = response.headers.get('content-type');
+    console.log('Response content type:', contentType);
+    
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || 'Failed to analyze article');
+      const text = await response.text();
+      console.error('Error response:', text);
+      
+      let errorMessage: string;
+      try {
+        const errorData = JSON.parse(text);
+        errorMessage = errorData.detail || 'Failed to analyze article';
+      } catch (parseError) {
+        console.error('Error parsing error response:', parseError);
+        errorMessage = text || 'Failed to analyze article';
+      }
+      
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
-    console.log('API Response:', data);
+    console.log('API Response data:', data);
     return data;
   } catch (error) {
+    console.error('Full error object:', error);
     if (error instanceof Error) {
+      console.error('Error stack:', error.stack);
       throw new Error(`Analysis failed: ${error.message}`);
     }
     throw new Error('An unexpected error occurred');
