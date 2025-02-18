@@ -73,4 +73,3 @@ class BiasAnalyzer:
                 "bias_score": 0.0,
                 "bias_percentage": 0
             }
-
