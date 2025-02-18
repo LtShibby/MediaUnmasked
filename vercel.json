@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
   "functions": {
     "api/analyze.py": {
       "memory": 1024,
@@ -7,9 +9,16 @@
     }
   },
   "routes": [
-    { "src": "/api/(.*)", "dest": "api/analyze.py" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "buildCommand": "pip uninstall -y fastapi pydantic pydantic-core uvicorn && rm -rf /vercel/.cache/pip && pip install -r requirements.txt --no-cache-dir"
-}
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+} 
