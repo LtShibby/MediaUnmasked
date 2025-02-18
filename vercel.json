@@ -2,15 +2,6 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
-  "builds": [
-    {
-      "src": "api/**/*.py",
-      "use": "@vercel/python@3.1.0",
-      "config": {
-        "runtime": "python3.11"
-      }
-    }
-  ],
   "functions": {
     "api/analyze.py": {
       "memory": 1024,
