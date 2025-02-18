@@ -1,11 +1,17 @@
 from typing import List, Dict, Optional, Tuple
 import logging
 from dataclasses import dataclass
-import spacy
 import re
-from transformers import pipeline
+from textblob import TextBlob
+import nltk
+from nltk.tokenize import sent_tokenize
+from nltk.tag import pos_tag
 
 from ..utils.logging_config import setup_logging
+
+# Download required NLTK data
+nltk.download('punkt', quiet=True)
+nltk.download('averaged_perceptron_tagger', quiet=True)
 
 @dataclass
 class BiasAnalysisResult:
@@ -16,12 +22,6 @@ class BiasAnalysisResult:
 
 class BiasAnalyzer:
     def __init__(self):
-        # Initialize sentiment analyzer
-        self.sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-        
-        # Load spaCy model for NLP tasks
-        self.nlp = spacy.load("en_core_web_sm")
-        
         # Initialize logger
         setup_logging()
         self.logger = logging.getLogger(__name__)
@@ -54,9 +54,10 @@ class BiasAnalyzer:
     def _analyze_sentiment(self, text: str) -> Tuple[str, float]:
         """Analyze the overall sentiment of the text."""
         try:
-            # Get sentiment predictions
-            results = self.sentiment_analyzer(text[:512])  # Limit text length for performance
-            sentiment_score = float(results[0]['score'])
+            # Use TextBlob for sentiment analysis
+            blob = TextBlob(text)
+            # TextBlob polarity is between -1 and 1, convert to 0-1 scale
+            sentiment_score = (blob.sentiment.polarity + 1) / 2
             
             # Map score to sentiment category
             if sentiment_score <= 0.2:
@@ -101,26 +102,31 @@ class BiasAnalyzer:
         """Identify potentially manipulative or misleading phrases."""
         flagged_phrases = []
         
+        # Split text into sentences
+        sentences = sent_tokenize(text)
+        
         # Check for manipulative patterns
         for pattern in self.manipulative_patterns:
             matches = re.finditer(pattern, text, re.IGNORECASE)
             for match in matches:
-                # Get some context around the match
-                start = max(0, match.start() - 20)
-                end = min(len(text), match.end() + 20)
-                context = text[start:end].strip()
-                flagged_phrases.append(context)
+                # Find the sentence containing this match
+                for sentence in sentences:
+                    if match.group() in sentence.lower():
+                        flagged_phrases.append(sentence.strip())
+                        break
                 
-        # Check for emotional amplifiers
-        doc = self.nlp(text)
-        for token in doc:
-            if token.pos_ == "ADV" and token.text.lower() in [
-                "extremely", "absolutely", "definitely", "clearly",
-                "obviously", "undoubtedly", "certainly"
-            ]:
-                # Get the sentence containing this adverb
-                sentence = next(sent for sent in doc.sents if token in sent)
-                flagged_phrases.append(sentence.text.strip())
+        # Check for emotional amplifiers using NLTK's POS tagger
+        for sentence in sentences:
+            words = nltk.word_tokenize(sentence)
+            pos_tags = pos_tag(words)
+            
+            for word, tag in pos_tags:
+                if tag == 'RB' and word.lower() in [
+                    "extremely", "absolutely", "definitely", "clearly",
+                    "obviously", "undoubtedly", "certainly"
+                ]:
+                    flagged_phrases.append(sentence.strip())
+                    break
                 
         return list(set(flagged_phrases))  # Remove duplicates
 
