@@ -23,7 +23,7 @@ def main():
         print(f"Sentiment: {result.sentiment}")
 
         print(f"Bias: {result.bias}")
-        print(f"Confidence Score: {result.confidence_score}%")
+        print(f"Confidence Score: {result.bias_score}%")
         print("\nFlagged Phrases:")
         for phrase in result.flagged_phrases:
             print(f"- {phrase}")

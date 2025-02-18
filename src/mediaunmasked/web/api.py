@@ -41,7 +41,7 @@ class AnalysisResponse(BaseModel):
     content: str
     sentiment: str
     bias: str
-    confidence_score: float
+    bias_score: float
     flagged_phrases: List[str]
 
 @app.post("/analyze", response_model=AnalysisResponse)
@@ -63,7 +63,7 @@ async def analyze_article(request: ArticleRequest):
             content=article['content'],
             sentiment=result.sentiment,
             bias=result.bias,
-            confidence_score=result.confidence_score,
+            bias_score=result.bias_score,
             flagged_phrases=result.flagged_phrases
         )
     except Exception as e:

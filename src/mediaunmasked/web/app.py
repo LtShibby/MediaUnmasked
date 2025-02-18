@@ -59,13 +59,13 @@ def main():
                 with col1:
                     st.subheader("Sentiment Analysis")
                     st.write(f"**Overall Sentiment:** {result.sentiment}")
-                    fig = create_sentiment_gauge(result.confidence_score / 100)
+                    fig = create_sentiment_gauge(result.bias_score / 100)
                     st.plotly_chart(fig)
                 
                 with col2:
                     st.subheader("Bias Analysis")
                     st.write(f"**Detected Bias:** {result.bias}")
-                    st.write(f"**Confidence Score:** {result.confidence_score:.1f}%")
+                    st.write(f"**Confidence Score:** {result.bias_score:.1f}%")
                 
                 # Show flagged phrases
                 if result.flagged_phrases:
