@@ -1,7 +1,11 @@
-# Python bytecode
+# Python bytecode and cache
 __pycache__/
-*.py[cod]
+*.py[cod]       # Matches .pyc, .pyo, and .pyd files
 *$py.class
+*.cpython-*     # Explicitly matches .cpython-* files
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Distribution / packaging
 dist/
@@ -26,11 +30,6 @@ env/
 
 # Logs
 *.log
-
-# Testing
-.coverage
-htmlcov/
-.pytest_cache/
 
 # Node
 node_modules/
