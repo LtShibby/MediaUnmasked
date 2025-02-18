@@ -2,13 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/mediaunmasked/web/api.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.9",
-        "buildCommand": "chmod +x vercel-build.sh && ./vercel-build.sh"
-      }
+      "src": "api/*.py",
+      "use": "@vercel/python"
     },
     {
       "src": "frontend/package.json",
@@ -21,12 +16,8 @@
   ],
   "routes": [
     {
-      "src": "/api/analyze",
-      "dest": "src/mediaunmasked/web/api.py"
-    },
-    {
       "src": "/api/(.*)",
-      "dest": "src/mediaunmasked/web/api.py"
+      "dest": "/api/$1"
     },
     {
       "src": "/assets/(.*)",
