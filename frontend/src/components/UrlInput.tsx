@@ -7,8 +7,8 @@ interface Props {
 
 const EXAMPLE_URLS = [
   'https://www.snopes.com/fact-check/trump-super-bowl-cost-taxpayers/',
-  'https://www.snopes.com/fact-check/biden-state-of-union-2024/',
-  'https://www.politifact.com/factchecks/2024/feb/16/donald-trump/trump-wrong-that-biden-gave-iran-permission-to-make/',
+  'https://www.politifact.com/factchecks/2025/feb/14/elon-musk/fema-did-not-give-disaster-relief-money-to-new-yor/',
+  'https://www.snopes.com/fact-check/muslims-minority-rights-churchill-quote/',
 ];
 
 export const UrlInput: FC<Props> = ({ onAnalyze, isLoading }) => {
