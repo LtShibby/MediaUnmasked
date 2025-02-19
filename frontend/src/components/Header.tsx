@@ -11,7 +11,7 @@ export const Header: FC<Props> = ({ onNavigate, currentPage }) => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Media Unmasked
+            MediaUnmask
           </h1>
           <p className="mt-2 text-lg text-gray-600">
             Unmask media bias with AI-powered analysis
