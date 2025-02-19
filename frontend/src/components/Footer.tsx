@@ -3,8 +3,8 @@ import { FC } from 'react';
 export const Footer: FC = () => {
   return (
     <footer className="w-full bg-gray-900 text-gray-300 py-6 text-center text-sm">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-6">
-        <p className="mb-2 md:mb-0">
+      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center px-4 sm:px-6 space-y-3 sm:space-y-0">
+        <p className="mb-2 sm:mb-0 text-xs sm:text-sm">
           © {new Date().getFullYear()}{" "}
           <a 
             href="https://wozwize.com" 
@@ -16,7 +16,7 @@ export const Footer: FC = () => {
           </a>. All Rights Reserved.
         </p>
         
-        <div className="flex space-x-4">
+        <div className="flex flex-wrap justify-center sm:justify-end gap-3 sm:gap-4 text-xs sm:text-sm">
           <a 
             href="https://wozwize.com/privacy-policy" 
             target="_blank"

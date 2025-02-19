@@ -54,9 +54,9 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
   if (!analysis) return null;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 px-4">
       {/* Overall Score Card */}
-      <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-6">
+      <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
         <div className="text-center mb-6 relative">
           <button
             ref={overallScoreButtonRef}
@@ -69,7 +69,7 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
           >
             <InfoIcon />
           </button>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             {scores.hasMediaScore ? (
               <>Media Unmasked Score: {(
                 (scores.headlineScore * 0.25) +
@@ -88,7 +88,7 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <ScoreCard
             title="Headline Analysis"
             isModalOpen={activeModal === "Headline Analysis"}
@@ -245,9 +245,9 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
       </div>
 
       {/* Article Content */}
-      <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">{analysis.headline}</h2>
-        <p className="text-gray-600 leading-relaxed">{analysis.content}</p>
+      <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">{analysis.headline}</h2>
+        <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{analysis.content}</p>
       </div>
 
       {/* Single Modal instance */}

@@ -33,9 +33,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
-      <div className="container mx-auto px-4 py-8 flex-grow">
+      <div className="flex-grow">
         <Header onNavigate={setCurrentPage} currentPage={currentPage} />
-        <main className="space-y-8">
+        <main className="container mx-auto px-4 py-6 space-y-8">
           {currentPage === 'home' ? (
             <AboutPage onStartAnalyzing={() => setCurrentPage('analyze')} />
           ) : (
