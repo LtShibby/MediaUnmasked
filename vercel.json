@@ -6,7 +6,7 @@
     "api/index.py": {
       "memory": 1024,
       "maxDuration": 10,
-      "runtime": "python3.9",
+      "runtime": "python@3.9",
       "excludeFiles": "**/*.{jpg,jpeg,png,gif,webp,mp4,webm,mp3,wav,pdf,zip,tar,gz}"
     }
   },
