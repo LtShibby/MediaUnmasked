@@ -18,16 +18,17 @@ class TestHeadlineAnalyzer(unittest.TestCase):
         
         self.logger.info(f"Testing matching headline:\nHeadline: {headline}\nContent: {content}")
         result = self.analyzer.analyze(headline, content)
-        
+
         self.assertIsInstance(result, dict)
         self.assertIn('headline_vs_content_score', result)
         self.assertIn('entailment_score', result)
         self.assertIn('contradiction_score', result)
-        
-        # Score should be above neutral for matching content
-        self.assertGreater(result['headline_vs_content_score'], 30)
-        # Should have low contradiction
-        self.assertLess(result['contradiction_score'], 0.3)
+
+        # Adjusted thresholds based on smaller models
+        self.assertGreater(result['headline_vs_content_score'], 50)  # Should be clearly above neutral
+        self.assertGreater(result['entailment_score'], 0.6)  # Should lean strongly towards entailment
+        self.assertLess(result['contradiction_score'], 0.2)  # Low contradiction expected
+
         self.logger.info(f"Matching headline test result: {result}")
 
     def test_contradictory_headline(self):
@@ -37,10 +38,11 @@ class TestHeadlineAnalyzer(unittest.TestCase):
         
         self.logger.info(f"Testing contradictory headline:\nHeadline: {headline}\nContent: {content}")
         result = self.analyzer.analyze(headline, content)
-        
-        # Score should be lower for contradictory content
-        self.assertLess(result['headline_vs_content_score'], 30)
-        self.assertGreater(result['contradiction_score'], 0.3)
+
+        # Contradiction should be dominant
+        self.assertLess(result['headline_vs_content_score'], 30)  # Should be low due to contradiction
+        self.assertGreater(result['contradiction_score'], 0.7)  # Expect strong contradiction
+
         self.logger.info(f"Contradictory headline test result: {result}")
 
     def test_neutral_headline(self):
@@ -50,10 +52,12 @@ class TestHeadlineAnalyzer(unittest.TestCase):
         
         self.logger.info(f"Testing neutral headline:\nHeadline: {headline}\nContent: {content}")
         result = self.analyzer.analyze(headline, content)
-        
-        # Score should be moderate for neutral content
+
+        # Should be within the neutral range
         self.assertGreater(result['headline_vs_content_score'], 40)
-        self.assertLess(result['headline_vs_content_score'], 80)
+        self.assertLess(result['headline_vs_content_score'], 70)
+        self.assertGreater(result['neutral_score'], 0.5)  # Should be dominantly neutral
+
         self.logger.info(f"Neutral headline test result: {result}")
 
     def test_error_handling(self):
@@ -63,5 +67,23 @@ class TestHeadlineAnalyzer(unittest.TestCase):
         self.assertEqual(result['entailment_score'], 0)
         self.assertEqual(result['contradiction_score'], 0)
 
+    def test_large_content(self):
+        """Test when content is too large and requires splitting."""
+        headline = "Major Scientific Breakthrough in AI Technology"
+        content = " ".join(["AI is evolving rapidly, changing industries worldwide."] * 300)  # Large content
+        
+        self.logger.info(f"Testing large content splitting with headline:\n{headline}")
+        result = self.analyzer.analyze(headline, content)
+
+        self.assertIsInstance(result, dict)
+        self.assertIn('headline_vs_content_score', result)
+        self.assertIn('entailment_score', result)
+        self.assertIn('contradiction_score', result)
+
+        # Ensure it properly processes large text
+        self.assertGreater(result['headline_vs_content_score'], 30)  # Should still provide a meaningful score
+
+        self.logger.info(f"Large content test result: {result}")
+
 if __name__ == '__main__':
-    unittest.main() 
+    unittest.main()

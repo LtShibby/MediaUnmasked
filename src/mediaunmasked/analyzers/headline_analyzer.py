@@ -1,7 +1,6 @@
 import logging
 from typing import Dict, Any, List
-from transformers import pipeline
-from transformers import AutoTokenizer
+from transformers import pipeline, AutoTokenizer
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -9,8 +8,9 @@ logger = logging.getLogger(__name__)
 class HeadlineAnalyzer:
     def __init__(self):
         """Initialize the NLI model for contradiction detection."""
-        self.nli_pipeline = pipeline("text-classification", model="roberta-large-mnli")
-        self.tokenizer = AutoTokenizer.from_pretrained("roberta-large-mnli")
+        MODEL_NAME = "cross-encoder/nli-distilroberta-base"  # Smaller, faster model
+        self.nli_pipeline = pipeline("text-classification", model=MODEL_NAME)
+        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.max_length = 512
         
     def _split_content(self, headline: str, content: str) -> List[str]:
@@ -19,28 +19,20 @@ class HeadlineAnalyzer:
         sections = []
         current_section = []
         
-        # Account for headline and [SEP] token in the max length
         headline_tokens = len(self.tokenizer.encode(headline))
-        sep_tokens = len(self.tokenizer.encode("[SEP]")) - 2  # -2 because encode adds special tokens
+        sep_tokens = len(self.tokenizer.encode("[SEP]")) - 2
         max_content_tokens = self.max_length - headline_tokens - sep_tokens
         
-        # Process words into sections
         for word in content_words:
             current_section.append(word)
-            
-            # Check if current section is approaching token limit
             current_text = " ".join(current_section)
             if len(self.tokenizer.encode(current_text)) >= max_content_tokens:
-                # Remove last word (it might make us go over limit)
                 current_section.pop()
                 sections.append(" ".join(current_section))
-                
-                # Start new section with 20% overlap for context
                 overlap_start = max(0, len(current_section) - int(len(current_section) * 0.2))
                 current_section = current_section[overlap_start:]
                 current_section.append(word)
         
-        # Add any remaining content as the last section
         if current_section:
             sections.append(" ".join(current_section))
         
@@ -57,7 +49,6 @@ class HeadlineAnalyzer:
         input_text = f"{headline} [SEP] {section}"
         result = self.nli_pipeline(input_text, top_k=None)
         
-        # Extract scores
         scores = {item['label']: item['score'] for item in result}
         
         logger.info("\nSection Analysis:")
@@ -75,7 +66,6 @@ class HeadlineAnalyzer:
             logger.info("HEADLINE ANALYSIS STARTED")
             logger.info("="*50)
             
-            # Handle empty inputs
             if not headline.strip() or not content.strip():
                 logger.warning("Empty headline or content provided")
                 return {
@@ -85,7 +75,6 @@ class HeadlineAnalyzer:
                     "contradictory_phrases": []
                 }
 
-            # Split content if too long
             content_tokens = len(self.tokenizer.encode(content))
             if content_tokens > self.max_length:
                 logger.warning(f"""
@@ -95,42 +84,22 @@ class HeadlineAnalyzer:
                     - Splitting into sections...
                 """)
                 sections = self._split_content(headline, content)
-                
-                # Analyze each section
-                section_scores = []
-                for i, section in enumerate(sections, 1):
-                    logger.info(f"\nAnalyzing section {i}/{len(sections)}")
-                    scores = self._analyze_section(headline, section)
-                    section_scores.append(scores)
-                
-                # Aggregate scores across sections
-                # Use max contradiction (if any section strongly contradicts, that's important)
-                # Use mean entailment (overall support across sections)
-                # Use mean neutral (general neutral tone across sections)
+                section_scores = [self._analyze_section(headline, section) for section in sections]
                 entailment_score = np.mean([s.get('ENTAILMENT', 0) for s in section_scores])
                 contradiction_score = np.max([s.get('CONTRADICTION', 0) for s in section_scores])
                 neutral_score = np.mean([s.get('NEUTRAL', 0) for s in section_scores])
-                
-                logger.info("\nAggregated Scores Across Sections:")
-                logger.info("-"*30)
-                logger.info(f"Mean Entailment: {entailment_score:.3f}")
-                logger.info(f"Max Contradiction: {contradiction_score:.3f}")
-                logger.info(f"Mean Neutral: {neutral_score:.3f}")
             else:
-                # Single section analysis
                 scores = self._analyze_section(headline, content)
                 entailment_score = scores.get('ENTAILMENT', 0)
                 contradiction_score = scores.get('CONTRADICTION', 0)
                 neutral_score = scores.get('NEUTRAL', 0)
             
-            # Compute final consistency score
             final_score = (
-                (entailment_score * 0.6) +      # Base score from entailment
-                (neutral_score * 0.3) +         # Neutral is acceptable
-                ((1 - contradiction_score) * 0.1)  # Small penalty for contradiction
+                (entailment_score * 0.6) +
+                (neutral_score * 0.3) +
+                ((1 - contradiction_score) * 0.1)
             ) * 100
             
-            # Log final results
             logger.info("\nFinal Analysis Results:")
             logger.info("-"*30)
             logger.info(f"Headline: {headline}")
@@ -148,7 +117,7 @@ class HeadlineAnalyzer:
                 "contradiction_score": round(contradiction_score, 2),
                 "contradictory_phrases": []
             }
-            
+        
         except Exception as e:
             logger.error("\nHEADLINE ANALYSIS ERROR")
             logger.error("-"*30)
@@ -161,4 +130,4 @@ class HeadlineAnalyzer:
                 "entailment_score": 0,
                 "contradiction_score": 0,
                 "contradictory_phrases": []
-            } 
+            }
