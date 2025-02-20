@@ -24,4 +24,14 @@ examples/
 docs/
 *.md
 *.txt
-!requirements.txt 
+!requirements.txt
+.git/
+.github/
+.pytest_cache/
+.coverage
+htmlcov/
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+**/__pycache__/
+**/*.pyc 

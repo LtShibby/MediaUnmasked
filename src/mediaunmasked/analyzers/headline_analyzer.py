@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class HeadlineAnalyzer:
     def __init__(self):
         """Initialize the NLI model for contradiction detection."""
-        MODEL_NAME = "cross-encoder/nli-distilroberta-base"  # Smaller, faster model
+        MODEL_NAME = "MoritzLaurer/DeBERTa-v3-xsmall-mnli-fever-anli-ling-binary"  # Tiny model
         self.nli_pipeline = pipeline("text-classification", model=MODEL_NAME)
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.max_length = 512
