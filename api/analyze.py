@@ -106,7 +106,7 @@ async def analyze_article(request: ArticleRequest) -> AnalysisResponse:
                 "details": {
                     "headline_analysis": {
                         "headline_vs_content_score": float(analysis['details']['headline_analysis']['headline_vs_content_score']),
-                        "contradictory_phrases": list(analysis['details']['headline_analysis']['contradictory_phrases'])
+                        "contradictory_phrases": analysis['details']['headline_analysis'].get('contradictory_phrases', [])
                     },
                     "sentiment_analysis": {
                         "sentiment": str(analysis['details']['sentiment_analysis']['sentiment']),
