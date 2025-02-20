@@ -3,11 +3,13 @@
 # Upgrade pip
 python -m pip install --upgrade pip
 
-# Install dependencies with specific extra index for PyTorch
-python -m pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+# Install minimal dependencies first
+python -m pip install --no-cache-dir fastapi uvicorn pydantic beautifulsoup4 requests python-dotenv numpy
 
-# Ensure transformers is installed
-python -m pip install --no-cache-dir transformers
+# Install ML dependencies with optimizations
+python -m pip install --no-cache-dir torch --extra-index-url https://download.pytorch.org/whl/cpu
+python -m pip install --no-cache-dir transformers[torch] --no-deps
+python -m pip install --no-cache-dir textblob
 
 # Ensure NLTK downloads are stored in /tmp
 mkdir -p /tmp/nltk_data
