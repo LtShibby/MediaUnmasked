@@ -13,13 +13,17 @@ class HeadlineAnalyzer:
         os.environ['TRANSFORMERS_CACHE'] = '/tmp/transformers_cache'
         os.environ['HF_HOME'] = '/tmp/huggingface'
         
-        MODEL_NAME = "MoritzLaurer/DeBERTa-v3-xsmall-mnli-fever-anli-ling-binary"  # Tiny model
+        MODEL_NAME = "prajjwal1/bert-tiny"  # Only 4.4M parameters vs 110M for DeBERTa
         
         # Create cache directories
         os.makedirs('/tmp/transformers_cache', exist_ok=True)
         os.makedirs('/tmp/huggingface', exist_ok=True)
         
-        self.nli_pipeline = pipeline("text-classification", model=MODEL_NAME)
+        self.nli_pipeline = pipeline(
+            "text-classification",
+            model=MODEL_NAME,
+            model_kwargs={"torch_dtype": "float32"}  # Use float32 to reduce size
+        )
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.max_length = 512
         
