@@ -3,7 +3,7 @@
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "functions": {
-    "api/analyze.py": {
+    "api/analyze": {
       "memory": 1024,
       "maxDuration": 10
     }
@@ -20,5 +20,9 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "TRANSFORMERS_CACHE": "/tmp/transformers_cache",
+    "HF_HOME": "/tmp/huggingface"
+  }
 } 

@@ -2,13 +2,23 @@ import logging
 from typing import Dict, Any, List
 from transformers import pipeline, AutoTokenizer
 import numpy as np
+import os
 
 logger = logging.getLogger(__name__)
 
 class HeadlineAnalyzer:
     def __init__(self):
         """Initialize the NLI model for contradiction detection."""
+        # Set cache directory to /tmp for Vercel's read-only filesystem
+        os.environ['TRANSFORMERS_CACHE'] = '/tmp/transformers_cache'
+        os.environ['HF_HOME'] = '/tmp/huggingface'
+        
         MODEL_NAME = "MoritzLaurer/DeBERTa-v3-xsmall-mnli-fever-anli-ling-binary"  # Tiny model
+        
+        # Create cache directories
+        os.makedirs('/tmp/transformers_cache', exist_ok=True)
+        os.makedirs('/tmp/huggingface', exist_ok=True)
+        
         self.nli_pipeline = pipeline("text-classification", model=MODEL_NAME)
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.max_length = 512
