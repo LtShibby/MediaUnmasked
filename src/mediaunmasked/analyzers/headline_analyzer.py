@@ -49,7 +49,7 @@ class HeadlineAnalyzer:
         input_text = f"{headline} [SEP] {section}"
         result = self.nli_pipeline(input_text, top_k=None)
         
-        scores = {item['label']: item['score'] for item in result}
+        scores = {item['label'].lower(): item['score'] for item in result}  # Ensure lowercase keys
         
         logger.info("\nSection Analysis:")
         logger.info("-"*30)
@@ -72,6 +72,7 @@ class HeadlineAnalyzer:
                     "headline_vs_content_score": 0,
                     "entailment_score": 0,
                     "contradiction_score": 0,
+                    "neutral_score": 0,
                     "contradictory_phrases": []
                 }
 
@@ -85,20 +86,25 @@ class HeadlineAnalyzer:
                 """)
                 sections = self._split_content(headline, content)
                 section_scores = [self._analyze_section(headline, section) for section in sections]
-                entailment_score = np.mean([s.get('ENTAILMENT', 0) for s in section_scores])
-                contradiction_score = np.max([s.get('CONTRADICTION', 0) for s in section_scores])
-                neutral_score = np.mean([s.get('NEUTRAL', 0) for s in section_scores])
+
+                # Ensure lowercase label keys are used
+                entailment_score = np.mean([s.get('entailment', 0) for s in section_scores])
+                contradiction_score = np.max([s.get('contradiction', 0) for s in section_scores])
+                neutral_score = np.mean([s.get('neutral', 0) for s in section_scores])
+
             else:
                 scores = self._analyze_section(headline, content)
-                entailment_score = scores.get('ENTAILMENT', 0)
-                contradiction_score = scores.get('CONTRADICTION', 0)
-                neutral_score = scores.get('NEUTRAL', 0)
+                entailment_score = scores.get('entailment', 0)
+                contradiction_score = scores.get('contradiction', 0)
+                neutral_score = scores.get('neutral', 0)
             
             final_score = (
                 (entailment_score * 0.6) +
                 (neutral_score * 0.3) +
                 ((1 - contradiction_score) * 0.1)
             ) * 100
+
+            logger.info(f"\nDEBUG - Aggregated Scores: Entailment: {entailment_score:.3f}, Contradiction: {contradiction_score:.3f}, Neutral: {neutral_score:.3f}")
             
             logger.info("\nFinal Analysis Results:")
             logger.info("-"*30)
@@ -115,6 +121,7 @@ class HeadlineAnalyzer:
                 "headline_vs_content_score": round(final_score, 1),
                 "entailment_score": round(entailment_score, 2),
                 "contradiction_score": round(contradiction_score, 2),
+                "neutral_score": round(neutral_score, 2),  # ✅ Fixed key mismatch here
                 "contradictory_phrases": []
             }
         
@@ -129,5 +136,6 @@ class HeadlineAnalyzer:
                 "headline_vs_content_score": 0,
                 "entailment_score": 0,
                 "contradiction_score": 0,
+                "neutral_score": 0,  # ✅ Fixed key mismatch here
                 "contradictory_phrases": []
             }
