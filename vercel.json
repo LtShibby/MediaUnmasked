@@ -4,7 +4,8 @@
   "outputDirectory": "frontend/dist",
   "functions": {
     "api/index.py": {
-      "runtime": "edge"
+      "memory": 1024,
+      "maxDuration": 10
     }
   },
   "routes": [
@@ -24,4 +25,4 @@
     "TRANSFORMERS_CACHE": "/tmp/transformers_cache",
     "HF_HOME": "/tmp/huggingface"
   }
-} 
+}
