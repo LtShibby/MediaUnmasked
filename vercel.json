@@ -4,9 +4,7 @@
   "outputDirectory": "frontend/dist",
   "functions": {
     "api/index.py": {
-      "memory": 1024,
-      "maxDuration": 10,
-      "excludeFiles": "**/*.{jpg,jpeg,png,gif,webp,mp4,webm,mp3,wav,pdf,zip,tar,gz}"
+      "runtime": "edge"
     }
   },
   "routes": [
