@@ -7,11 +7,11 @@ mkdir -p /tmp/huggingface
 # Upgrade pip
 python -m pip install --upgrade pip
 
-# Install minimal dependencies first
-python -m pip install --no-cache-dir -r requirements.txt
-
 # Install torch CPU only version
 python -m pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install other dependencies after torch
+python -m pip install --no-cache-dir -r requirements.txt
 
 # Set environment variables for model caching
 export TRANSFORMERS_CACHE="/tmp/transformers_cache"
