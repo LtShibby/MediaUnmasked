@@ -15,8 +15,8 @@ build/
 # Virtual environments
 venv/
 env/
-.env/
 .venv/
+.env/
 
 # IDE files
 .vscode/
@@ -39,7 +39,20 @@ yarn-error.log*
 
 # Build output
 /build
-/dist
 
 # Vercel
-.vercel
+.vercel/
+
+# Node modules and dependency caches
+.vite/
+.npmrc
+
+# Build artifacts
+yarn.lock
+package-lock.json
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+

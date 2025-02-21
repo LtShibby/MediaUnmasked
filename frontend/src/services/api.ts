@@ -1,6 +1,7 @@
-const API_URL = import.meta.env.PROD 
-  ? window.location.origin  // Use the same domain as frontend in production
-  : 'http://localhost:8000'; // Development API path
+const API_URL = import.meta.env.PROD
+  ? 'https://wozwize-media-unmasked-api.hf.space'  // Use your Hugging Face deployed backend in production
+  : 'http://localhost:7860'; // Development API path
+
 
 export interface MediaScoreDetails {
   headline_analysis: {
