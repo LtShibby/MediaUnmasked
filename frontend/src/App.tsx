@@ -5,16 +5,37 @@ import { Header } from './components/Header'
 import { AboutPage } from './components/AboutPage'
 import { Footer } from './components/Footer'
 import { analyzeArticle, AnalysisResponse } from './services/api'
+import LoadingBar from './components/LoadingBar'
+import { isValidNewsUrl } from './utils/urlValidator'
+import { NewsSourceModal } from './components/NewsSourceModal'
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<'home' | 'analyze'>('home');
+  const [showModal, setShowModal] = useState(false);
+  const [invalidDomain, setInvalidDomain] = useState<string>('');
 
   const handleAnalyze = async (url: string) => {
     setIsLoading(true);
+    setIsAnalyzing(true);
     setError(null);
+    
+    const urlValidation = isValidNewsUrl(url);
+    if (!urlValidation.isValid) {
+      try {
+        const domain = new URL(url).hostname.replace('www.', '');
+        setInvalidDomain(domain);
+      } catch {
+        setInvalidDomain('Invalid URL');
+      }
+      setShowModal(true);
+      setIsLoading(false);
+      setIsAnalyzing(false);
+      return;
+    }
     
     try {
       console.log('Starting analysis for URL:', url);
@@ -23,11 +44,11 @@ function App() {
       setAnalysis(result);
     } catch (err) {
       console.error('Analysis error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      setError('An error occurred during analysis');
       setAnalysis(null);
     } finally {
       setIsLoading(false);
+      setIsAnalyzing(false);
     }
   };
 
@@ -61,6 +82,12 @@ function App() {
         </main>
       </div>
       <Footer />
+      <LoadingBar isLoading={isAnalyzing} />
+      <NewsSourceModal 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)}
+        domain={invalidDomain}
+      />
     </div>
   )
 }
