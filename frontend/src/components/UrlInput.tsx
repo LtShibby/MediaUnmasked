@@ -1,6 +1,6 @@
-import { FC, useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 
-interface Props {
+interface UrlInputProps {
   onAnalyze: (url: string) => void;
   isLoading: boolean;
 }
@@ -11,19 +11,23 @@ const EXAMPLE_URLS = [
   'https://www.snopes.com/fact-check/muslims-minority-rights-churchill-quote/',
 ];
 
-export const UrlInput: FC<Props> = ({ onAnalyze, isLoading }) => {
+export const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading }) => {
   const [url, setUrl] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    onAnalyze(url);
+    // Add https:// if no protocol is specified
+    const urlToAnalyze = url.startsWith('http://') || url.startsWith('https://')
+      ? url
+      : `https://${url}`;
+    onAnalyze(urlToAnalyze);
   };
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto px-4">
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
         <input
-          type="url"
+          type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="Enter article URL..."
@@ -34,7 +38,7 @@ export const UrlInput: FC<Props> = ({ onAnalyze, isLoading }) => {
         />
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !url.trim()}
           className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-indigo-600 to-purple-600 
                    text-white rounded-lg font-medium shadow-lg
                    hover:from-indigo-700 hover:to-purple-700
