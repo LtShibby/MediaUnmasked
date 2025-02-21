@@ -29,7 +29,7 @@ export const NewsSourceModal: React.FC<NewsSourceModalProps> = ({ isOpen, onClos
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
             className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
-            onClick={e => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             {/* Top Pattern */}
             <div className="h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
