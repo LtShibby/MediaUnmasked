@@ -30,7 +30,7 @@ export const AboutPage: FC<Props> = ({ onStartAnalyzing }) => {
             spin, deception, or bias. In an era of <span className="font-semibold">clickbait, misinformation, and propaganda</span>, 
             we expose hidden narratives and empower readers with unbiased analysis.
           </p>
-          <p className="text-indigo-600 font-semibold text-xl mt-4">
+          <p className="text-indigo-600 font-semibold text-xl mt-4 text-center">
             Because the media watches you. <br /> Now, <span className="underline">we’re watching them.</span>
           </p>
         </div>
@@ -84,7 +84,7 @@ export const AboutPage: FC<Props> = ({ onStartAnalyzing }) => {
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">Demand Better Journalism</h2>
           <p className="text-lg text-gray-600 mt-4">
-            Media literacy isn't optional anymore—it's **essential**.  
+            Media literacy isn't optional anymore—it's <b>essential.</b> <br />
             Every day, we uncover bias, expose contradictions, and **set a new standard for truth in journalism**.
           </p>
           <button 
