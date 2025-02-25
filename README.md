@@ -42,19 +42,12 @@ MediaUnmasked is a web application designed to analyze and present media article
    npm run dev
    ```
 
-### Backend Setup
-1. Navigate to the `api` directory:
-   ```bash
-   cd api
-   ```
-2. Install the Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the backend server:
-   ```bash
-   python app.py
-   ```
+## Backend
+
+The backend for MediaUnmasked is run through the [media-unmasked-api](https://github.com/LtShibby/media-unmasked-api) project, which is officially hosted on Hugging Face. 
+
+For instructions on running the backend locally, please refer to the [project's README](https://github.com/LtShibby/media-unmasked-api/blob/main/README.md).
+
 
 ## Deployment
 
