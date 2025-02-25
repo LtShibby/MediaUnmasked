@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@heroicons/react": "^2.2.0",
-    "framer-motion": "^12.4.7"
+    "@mui/material": "^6.4.5",
+    "framer-motion": "^12.4.7",
+    "react-markdown": "^10.0.0"
   }
 }

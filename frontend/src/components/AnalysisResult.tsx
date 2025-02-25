@@ -1,5 +1,6 @@
 import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { AnalysisResponse } from '../services/api';
+import { ArticleContent } from './ArticleContent';
 
 interface Props {
   analysis: AnalysisResponse;
@@ -245,10 +246,10 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
       </div>
 
       {/* Article Content */}
-      <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">{analysis.headline}</h2>
-        <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{analysis.content}</p>
-      </div>
+      <ArticleContent 
+        headline={analysis.headline}
+        content={analysis.content}
+      />
 
       {/* Single Modal instance */}
       {activeModal && modalPosition && (
