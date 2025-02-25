@@ -28,7 +28,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline }) =>
 
   // Custom components for ReactMarkdown
   const components = {
-    a: ({ href, children }) => (
+    a: ({ href, children }: { href?: string; children: React.ReactNode }) => (
       <Link 
         href={href} 
         target="_blank" 
@@ -38,7 +38,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline }) =>
         {children}
       </Link>
     ),
-    h3: ({ children }) => (
+    h3: ({ children }: { children: React.ReactNode }) => (
       <Typography 
         variant="h5" 
         sx={{ 
@@ -51,7 +51,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline }) =>
         {children}
       </Typography>
     ),
-    p: ({ children }) => (
+    p: ({ children }: { children: React.ReactNode }) => (
       <Typography 
         variant="body1" 
         sx={{ 
@@ -67,7 +67,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline }) =>
         {children}
       </Typography>
     ),
-    strong: ({ children }) => (
+    strong: ({ children }: { children: React.ReactNode }) => (
       <Typography 
         component="span" 
         sx={{ 
@@ -79,7 +79,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline }) =>
         {children}
       </Typography>
     ),
-    em: ({ children }) => (
+    em: ({ children }: { children: React.ReactNode }) => (
       <Typography 
         component="span" 
         sx={{ 
