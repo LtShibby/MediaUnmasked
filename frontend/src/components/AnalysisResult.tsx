@@ -335,7 +335,6 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
   );
 };
 
-// Separate ScoreCard component for better organization
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -398,96 +397,6 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, content }) => {
         </div>
       </div>
     </>
-  );
-};
-
-interface ScoreCardProps {
-  title: string;
-  score: number;
-  details?: string[];
-  color: 'blue' | 'green' | 'amber' | 'purple';
-  explanation: {
-    short: string;  // For tooltip
-    detailed: React.ReactNode;  // For modal
-  };
-  isModalOpen: boolean;
-  onModalOpen: (title: string, position: DOMRect) => void;
-  onModalClose: () => void;
-}
-
-const ScoreCard: FC<ScoreCardProps> = ({ 
-  title, 
-  score, 
-  details, 
-  color,
-  explanation,
-  onModalOpen
-}) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  
-  const handleInfoClick = () => {
-    if (buttonRef.current) {
-      onModalOpen(title, buttonRef.current.getBoundingClientRect());
-    }
-  };
-
-  const colorClasses = {
-    blue: 'bg-blue-50 border-blue-200',
-    green: 'bg-green-50 border-green-200',
-    amber: 'bg-amber-50 border-amber-200',
-    purple: 'bg-purple-50 border-purple-200',
-  };
-
-  // Special handling for bias score color
-  const getScoreColor = (score: number, cardType: string) => {
-    if (cardType === "Bias Analysis" || cardType === "Manipulation Detection") {
-      // For bias and manipulation: 0% = green (neutral/good), 100% = red (extreme/bad)
-      if (score === 0) return 'text-green-600';
-      if (score === 100) return 'text-red-600';
-      
-      // Calculate color between green and red based on score
-      const red = Math.round((score / 100) * 255);
-      const green = Math.round(((100 - score) / 100) * 255);
-      return `text-[rgb(${red},${green},0)]`;
-    } else {
-      return score >= 80 ? 'text-green-600' : 
-             score >= 50 ? 'text-amber-600' : 
-             'text-red-600';
-    }
-  };
-
-  return (
-    <div 
-      className={`rounded-lg border p-4 ${colorClasses[color]} hover:shadow-md transition-shadow relative`}
-      title={explanation.short}
-    >
-      <button
-        ref={buttonRef}
-        onClick={handleInfoClick}
-        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
-        title="View scoring breakdown"
-      >
-        <InfoIcon />
-      </button>
-      
-      <h3 className="font-medium text-gray-900 mb-2">{title}</h3>
-      <p className={`text-2xl font-bold ${getScoreColor(
-        title === "Manipulation Detection" ? 100 - score : score,
-        title
-      )}`}>
-        {(title === "Manipulation Detection" ? 100 - score : score).toFixed(1)}%
-      </p>
-      
-      {details && details.length > 0 && (
-        <div className="mt-3 space-y-2">
-          {details.map((detail, index) => (
-            <p key={index} className="text-sm text-gray-600 bg-white/50 p-2 rounded">
-              {detail}
-            </p>
-          ))}
-        </div>
-      )}
-    </div>
   );
 };
 

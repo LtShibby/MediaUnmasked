@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Box, Link as MuiLink } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
+import { ElementType } from 'react';
 
 interface ArticleContentProps {
   content: string;
@@ -72,37 +73,42 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
   };
 
   const markdownComponents: Partial<Components> = {
-    a: ({ node, ...props }) => (
+    a: ({ node, children, ...props }) => (
       <MuiLink
-        component="a"
+        {...props}
         target="_blank"
         rel="noopener noreferrer"
         color="primary"
-        {...props}
-      />
+      >
+        {children}
+      </MuiLink>
     ),
-    h3: ({ node, ...props }) => (
+    h3: ({ node, children, ...props }) => (
       <Typography
-        component="h3"
         variant="h5"
         gutterBottom
+        component="h3"
         sx={{ mt: 3, mb: 2, fontWeight: 'bold', color: 'text.primary' }}
         {...props}
-      />
+      >
+        {children}
+      </Typography>
     ),
-    p: ({ node, ...props }) => (
+    p: ({ node, children, ...props }) => (
       <Typography
-        component="p"
         variant="body1"
         paragraph
+        component="p"
         sx={{ mb: 2, lineHeight: 1.7, color: 'text.primary' }}
         {...props}
-      />
+      >
+        {children}
+      </Typography>
     ),
-    strong: ({ node, ...props }) => (
+    strong: ({ node, children, ...props }) => (
       <Typography
-        component="strong"
         variant="body1"
+        component="strong"
         sx={{
           fontWeight: 700,
           display: 'inline',
@@ -135,15 +141,19 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
           }
         }}
         {...props}
-      />
+      >
+        {children}
+      </Typography>
     ),
-    em: ({ node, ...props }) => (
+    em: ({ node, children, ...props }) => (
       <Typography
-        component="em"
         variant="body1"
+        component="em"
         sx={{ fontStyle: 'italic', display: 'inline' }}
         {...props}
-      />
+      >
+        {children}
+      </Typography>
     ),
   };
 
