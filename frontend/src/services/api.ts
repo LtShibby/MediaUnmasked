@@ -26,7 +26,25 @@ export interface MediaScoreDetails {
 export interface MediaScore {
   media_unmasked_score: number;
   rating: string;
-  details: MediaScoreDetails;
+  details: {
+    headline_analysis: {
+      headline_vs_content_score: number;
+      contradictory_phrases: string[];
+    };
+    evidence_analysis: {
+      evidence_based_score: number;
+      flagged_phrases: string[];
+    };
+    sentiment_analysis: {
+      manipulation_score: number;
+      flagged_phrases: string[];
+    };
+    bias_analysis: {
+      bias: string;
+      bias_score: number;
+      bias_percentage: number;
+    };
+  };
 }
 
 export interface AnalysisResponse {

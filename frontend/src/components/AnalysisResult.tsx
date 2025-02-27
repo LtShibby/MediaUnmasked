@@ -192,19 +192,19 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
             </p>
           </div>
         )}
-        <ArticleContent 
+        <ArticleContent
           headline={analysis.headline}
           content={analysis.content}
           selectedAnalysis={selectedAnalysis}
           flaggedPhrases={
             selectedAnalysis === 'headline' 
-              ? analysis.media_score?.details?.headline_analysis?.flagged_phrases || []
+              ? analysis.media_score?.details?.headline_analysis?.contradictory_phrases || []
               : selectedAnalysis === 'evidence'
               ? analysis.media_score?.details?.evidence_analysis?.flagged_phrases || []
               : selectedAnalysis === 'manipulation'
               ? analysis.media_score?.details?.sentiment_analysis?.flagged_phrases || []
               : selectedAnalysis === 'bias'
-              ? analysis.media_score?.details?.bias_analysis?.flagged_phrases || []
+              ? analysis.flagged_phrases || []
               : []
           }
         />

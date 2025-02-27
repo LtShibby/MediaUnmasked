@@ -73,10 +73,17 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
 
   const markdownComponents: Partial<Components> = {
     a: ({ node, ...props }) => (
-      <MuiLink {...props} target="_blank" rel="noopener noreferrer" color="primary" />
+      <MuiLink
+        component="a"
+        target="_blank"
+        rel="noopener noreferrer"
+        color="primary"
+        {...props}
+      />
     ),
     h3: ({ node, ...props }) => (
       <Typography
+        component="h3"
         variant="h5"
         gutterBottom
         sx={{ mt: 3, mb: 2, fontWeight: 'bold', color: 'text.primary' }}
@@ -85,6 +92,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
     ),
     p: ({ node, ...props }) => (
       <Typography
+        component="p"
         variant="body1"
         paragraph
         sx={{ mb: 2, lineHeight: 1.7, color: 'text.primary' }}
@@ -93,8 +101,8 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
     ),
     strong: ({ node, ...props }) => (
       <Typography
+        component="strong"
         variant="body1"
-        component="span"
         sx={{
           fontWeight: 700,
           display: 'inline',
@@ -131,8 +139,8 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
     ),
     em: ({ node, ...props }) => (
       <Typography
+        component="em"
         variant="body1"
-        component="span"
         sx={{ fontStyle: 'italic', display: 'inline' }}
         {...props}
       />
