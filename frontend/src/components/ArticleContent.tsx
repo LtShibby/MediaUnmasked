@@ -2,7 +2,6 @@ import React from 'react';
 import { Typography, Box, Link as MuiLink } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
-import { ElementType } from 'react';
 
 interface ArticleContentProps {
   content: string;
@@ -72,10 +71,10 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
     }
   };
 
-  const markdownComponents: Partial<Components> = {
-    a: ({ node, children, ...props }) => (
+  const markdownComponents: Components = {
+    a: ({ href, children }) => (
       <MuiLink
-        {...props}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
         color="primary"
@@ -83,29 +82,27 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
         {children}
       </MuiLink>
     ),
-    h3: ({ node, children, ...props }) => (
+    h3: ({ children }) => (
       <Typography
         variant="h5"
         gutterBottom
         component="h3"
         sx={{ mt: 3, mb: 2, fontWeight: 'bold', color: 'text.primary' }}
-        {...props}
       >
         {children}
       </Typography>
     ),
-    p: ({ node, children, ...props }) => (
+    p: ({ children }) => (
       <Typography
         variant="body1"
         paragraph
         component="p"
         sx={{ mb: 2, lineHeight: 1.7, color: 'text.primary' }}
-        {...props}
       >
         {children}
       </Typography>
     ),
-    strong: ({ node, children, ...props }) => (
+    strong: ({ children }) => (
       <Typography
         variant="body1"
         component="strong"
@@ -140,17 +137,15 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ content, headline, sele
                            'transparent',
           }
         }}
-        {...props}
       >
         {children}
       </Typography>
     ),
-    em: ({ node, children, ...props }) => (
+    em: ({ children }) => (
       <Typography
         variant="body1"
         component="em"
         sx={{ fontStyle: 'italic', display: 'inline' }}
-        {...props}
       >
         {children}
       </Typography>
