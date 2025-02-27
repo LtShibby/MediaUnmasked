@@ -165,7 +165,8 @@ const VALID_NEWS_DOMAINS = new Set([
   'ppv.com',
   'republicanpost.net',
   'pressherald.com',
-  'straitstimes.com'
+  'straitstimes.com',
+  'dailywire.com'
 ]);
 
 export const isValidNewsUrl = (url: string): { isValid: boolean; message?: string } => {
