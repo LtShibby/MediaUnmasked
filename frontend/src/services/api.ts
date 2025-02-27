@@ -40,9 +40,10 @@ export interface AnalysisResponse {
   media_score: MediaScore;
 }
 
-export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => {
+export const analyzeArticle = async (url: string, useAI: boolean = false): Promise<AnalysisResponse> => {
   try {
     console.log('Sending request to:', `${API_URL}/api/analyze`);
+    console.log('Analysis mode:', useAI ? 'AI-Powered' : 'Traditional');
     
     const response = await fetch(`${API_URL}/api/analyze`, {
       method: 'POST',
@@ -51,7 +52,7 @@ export const analyzeArticle = async (url: string): Promise<AnalysisResponse> => 
       },
       mode: 'cors',
       credentials: 'omit',
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url, use_ai: useAI }),
     });
 
     const contentType = response.headers.get('content-type');

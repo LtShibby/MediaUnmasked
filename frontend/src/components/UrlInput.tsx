@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 
 interface UrlInputProps {
-  onAnalyze: (url: string) => void;
+  onAnalyze: (url: string, useAI: boolean) => void;
   isLoading: boolean;
 }
 
@@ -13,6 +13,7 @@ const EXAMPLE_URLS = [
 
 export const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading }) => {
   const [url, setUrl] = useState('');
+  const [useAI, setUseAI] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -20,44 +21,78 @@ export const UrlInput: React.FC<UrlInputProps> = ({ onAnalyze, isLoading }) => {
     const urlToAnalyze = url.startsWith('http://') || url.startsWith('https://')
       ? url
       : `https://${url}`;
-    onAnalyze(urlToAnalyze);
+    onAnalyze(urlToAnalyze, useAI);
   };
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto px-4">
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="Enter article URL..."
-          className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-200 rounded-lg shadow-sm 
-                   focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                   bg-white/50 backdrop-blur-sm transition-all"
-          required
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !url.trim()}
-          className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-indigo-600 to-purple-600 
-                   text-white rounded-lg font-medium shadow-lg
-                   hover:from-indigo-700 hover:to-purple-700
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   transition-all duration-200 ease-in-out"
-        >
-          {isLoading ? (
-            <span className="flex items-center gap-2">
-              <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Analyzing...
-            </span>
-          ) : (
-            'Analyze'
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Enter article URL..."
+            className="flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-200 rounded-lg shadow-sm 
+                     focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+                     bg-white/50 backdrop-blur-sm transition-all"
+            required
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !url.trim()}
+            className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-indigo-600 to-purple-600 
+                     text-white rounded-lg font-medium shadow-lg
+                     hover:from-indigo-700 hover:to-purple-700
+                     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
+                     disabled:opacity-50 disabled:cursor-not-allowed
+                     transition-all duration-200 ease-in-out"
+          >
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Analyzing...
+              </span>
+            ) : (
+              'Analyze'
+            )}
+          </button>
+        </div>
+
+        {/* Analysis Mode Toggle */}
+        <div className="flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-lg p-3 border border-gray-200">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-700">Analysis Mode:</span>
+            <div className="flex items-center gap-1">
+              <span className={`text-sm ${!useAI ? 'font-semibold text-indigo-600' : 'text-gray-500'}`}>Traditional</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={useAI}
+                onClick={() => setUseAI(!useAI)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                  useAI ? 'bg-indigo-600' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    useAI ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span className={`text-sm ${useAI ? 'font-semibold text-indigo-600' : 'text-gray-500'}`}>AI-Powered</span>
+            </div>
+          </div>
+          {useAI && (
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded">BETA</span>
+              <span className="text-xs text-gray-500">(Longer processing time)</span>
+            </div>
           )}
-        </button>
+        </div>
       </form>
 
       <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 sm:p-6 border border-gray-200 shadow-sm">

@@ -8,6 +8,7 @@ interface Props {
 
 export const AnalysisResult: FC<Props> = ({ analysis }) => {
   const overallScoreButtonRef = useRef<HTMLButtonElement>(null);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<string | null>(null);
   // Add detailed logging
   console.log('=== Analysis Response Structure ===');
   console.log('Raw analysis prop:', JSON.stringify(analysis, null, 2));  // Pretty print
@@ -90,166 +91,124 @@ export const AnalysisResult: FC<Props> = ({ analysis }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <ScoreCard
-            title="Headline Analysis"
-            isModalOpen={activeModal === "Headline Analysis"}
-            onModalOpen={handleModalOpen}
-            onModalClose={handleModalClose}
-            score={scores.headlineScore}
-            details={[
-              `Headline Quality: ${
-                scores.headlineScore >= 80 ? "Excellent Match" :
-                scores.headlineScore >= 60 ? "Good Match" :
-                scores.headlineScore >= 40 ? "Fair Match" :
-                scores.headlineScore >= 20 ? "Poor Match" :
-                "Misleading"
-              }`,
-              ...(analysis.media_score?.details?.headline_analysis?.contradictory_phrases || [])
-            ]}
-            color="blue"
-            explanation={{
-              short: "Measures how well the headline matches the article content",
-              detailed: (
-                <div className="space-y-4">
-                  <p>The Headline Analysis score is calculated by examining:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Content Matching:</strong> How well the headline reflects the actual content</li>
-                    <li><strong>Clickbait Detection:</strong> Identifies sensationalized or misleading headlines</li>
-                    <li><strong>Contradiction Analysis:</strong> Flags statements that contradict the headline</li>
-                  </ul>
-                  <p className="text-sm text-gray-600">
-                    A score of 100% indicates perfect alignment between headline and content,
-                    while lower scores suggest potential misleading or clickbait headlines.
-                  </p>
-                </div>
-              )
-            }}
-          />
+          <div 
+            onClick={() => setSelectedAnalysis('headline')}
+            className={`rounded-lg border p-4 bg-blue-50 border-blue-200 hover:shadow-md transition-shadow relative cursor-pointer ${selectedAnalysis === 'headline' ? 'ring-2 ring-blue-400' : ''}`}
+            title="Measures how well the headline matches the article content"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Headline Analysis</h3>
+            <p className={`text-2xl font-bold ${selectedAnalysis === 'headline' ? 'text-blue-600' : 'text-gray-600'}`}>
+              {scores.headlineScore.toFixed(1)}%
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              {scores.headlineScore >= 80 ? "Excellent Match" :
+               scores.headlineScore >= 60 ? "Good Match" :
+               scores.headlineScore >= 40 ? "Fair Match" :
+               scores.headlineScore >= 20 ? "Poor Match" :
+               "Misleading"}
+            </p>
+            <p className="text-xs text-gray-400 absolute bottom-2 right-2">Click to analyze</p>
+          </div>
 
-          <ScoreCard
-            title="Evidence-Based Reporting"
-            isModalOpen={activeModal === "Evidence-Based Reporting"}
-            onModalOpen={handleModalOpen}
-            onModalClose={handleModalClose}
-            score={scores.evidenceScore}
-            details={[
-              `Evidence Level: ${
-                scores.evidenceScore >= 80 ? "Well Supported" :
-                scores.evidenceScore >= 60 ? "Adequately Supported" :
-                scores.evidenceScore >= 40 ? "Partially Supported" :
-                scores.evidenceScore >= 20 ? "Poorly Supported" :
-                "Unsupported"
-              }`
-            ]}
-            color="green"
-            explanation={{
-              short: "Evaluates the presence of citations, sources, and factual evidence. Higher scores indicate well-supported claims with verifiable sources.",
-              detailed: (
-                <div className="space-y-4">
-                  <p>The Evidence-Based Reporting score evaluates:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Citations:</strong> Use of credible sources and references</li>
-                    <li><strong>Data Support:</strong> Inclusion of statistics and factual evidence</li>
-                    <li><strong>Expert Quotes:</strong> References to expert opinions and studies</li>
-                  </ul>
-                  <p className="text-sm text-gray-600">
-                    Current Score: {scores.evidenceScore}% - {scores.evidenceScore >= 80 ? 'Well-supported' : 
-                    scores.evidenceScore >= 50 ? 'Moderately supported' : 'Poorly supported'}
-                  </p>
-                </div>
-              )
-            }}
-          />
+          <div 
+            onClick={() => setSelectedAnalysis('evidence')}
+            className={`rounded-lg border p-4 bg-green-50 border-green-200 hover:shadow-md transition-shadow relative cursor-pointer ${selectedAnalysis === 'evidence' ? 'ring-2 ring-green-400' : ''}`}
+            title="Evaluates the presence of citations, sources, and factual evidence"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Evidence-Based Reporting</h3>
+            <p className={`text-2xl font-bold ${selectedAnalysis === 'evidence' ? 'text-green-600' : 'text-gray-600'}`}>
+              {scores.evidenceScore.toFixed(1)}%
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              {scores.evidenceScore >= 80 ? "Well Supported" :
+               scores.evidenceScore >= 60 ? "Adequately Supported" :
+               scores.evidenceScore >= 40 ? "Partially Supported" :
+               scores.evidenceScore >= 20 ? "Poorly Supported" :
+               "Unsupported"}
+            </p>
+            <p className="text-xs text-gray-400 absolute bottom-2 right-2">Click to analyze</p>
+          </div>
 
-          <ScoreCard
-            title="Manipulation Detection"
-            isModalOpen={activeModal === "Manipulation Detection"}
-            onModalOpen={handleModalOpen}
-            onModalClose={handleModalClose}
-            score={scores.manipulationScore}
-            details={[
-              `Manipulation Level: ${
-                scores.manipulationScore <= 20 ? "Extreme Manipulation" :
-                scores.manipulationScore <= 40 ? "High Manipulation" :
-                scores.manipulationScore <= 60 ? "Moderate Manipulation" :
-                scores.manipulationScore <= 80 ? "Low Manipulation" :
-                "Minimal Manipulation"
-              }`,
-              ...(analysis.media_score?.details?.sentiment_analysis?.flagged_phrases || [])
-            ]}
-            color="amber"
-            explanation={{
-              short: "Measures absence of manipulative language (higher score = less manipulation)",
-              detailed: (
-                <div className="space-y-4">
-                  <p>The Manipulation Detection score analyzes:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Emotional Language:</strong> Use of emotionally charged words</li>
-                    <li><strong>Loaded Phrases:</strong> Expressions designed to provoke reactions</li>
-                    <li><strong>Manipulative Patterns:</strong> Common persuasion techniques</li>
-                  </ul>
-                  <p className="text-sm text-gray-600">
-                    A score of 100% indicates no manipulative language detected,
-                    while 0% indicates highly manipulative content.
-                  </p>
-                  {analysis.media_score?.details?.sentiment_analysis?.flagged_phrases?.length > 0 && (
-                    <div className="mt-4">
-                      <p className="font-medium">Flagged Phrases:</p>
-                      <ul className="list-disc pl-5 mt-2 space-y-1">
-                        {analysis.media_score.details.sentiment_analysis.flagged_phrases.map((phrase, index) => (
-                          <li key={index} className="text-sm text-gray-600">{phrase}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )
-            }}
-          />
+          <div 
+            onClick={() => setSelectedAnalysis('manipulation')}
+            className={`rounded-lg border p-4 bg-amber-50 border-amber-200 hover:shadow-md transition-shadow relative cursor-pointer ${selectedAnalysis === 'manipulation' ? 'ring-2 ring-amber-400' : ''}`}
+            title="Measures absence of manipulative language"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Manipulation Detection</h3>
+            <p className={`text-2xl font-bold ${selectedAnalysis === 'manipulation' ? 'text-amber-600' : 'text-gray-600'}`}>
+              {scores.manipulationScore.toFixed(1)}%
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              {scores.manipulationScore <= 20 ? "Extreme Manipulation" :
+               scores.manipulationScore <= 40 ? "High Manipulation" :
+               scores.manipulationScore <= 60 ? "Moderate Manipulation" :
+               scores.manipulationScore <= 80 ? "Low Manipulation" :
+               "Minimal Manipulation"}
+            </p>
+            <p className="text-xs text-gray-400 absolute bottom-2 right-2">Click to analyze</p>
+          </div>
 
-          <ScoreCard
-            title="Bias Analysis"
-            isModalOpen={activeModal === "Bias Analysis"}
-            onModalOpen={handleModalOpen}
-            onModalClose={handleModalClose}
-            score={analysis.media_score?.details?.bias_analysis?.bias_percentage || 0}
-            details={[
-              `Detected Bias: ${analysis.media_score?.details?.bias_analysis?.bias}`,
-              `Bias Level: ${
-                scores.biasScore <= 20 ? "Minimal Bias" :
-                scores.biasScore <= 40 ? "Low Bias" :
-                scores.biasScore <= 60 ? "Moderate Bias" :
-                scores.biasScore <= 80 ? "High Bias" :
-                "Extreme Bias"
-              }`
-            ]}
-            color="purple"
-            explanation={{
-              short: "Measures political bias using keyword analysis",
-              detailed: (
-                <div className="space-y-4">
-                  <p>The Bias Analysis score measures:</p>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Political Leaning:</strong> Detection of left/right-leaning language</li>
-                    <li><strong>Bias Intensity:</strong> Strength of detected bias (0-100%)</li>
-                    <li><strong>Keyword Analysis:</strong> Presence of politically charged terms</li>
-                  </ul>
-                  <p className="text-sm text-gray-600">
-                    Current Analysis: {analysis.media_score?.details?.bias_analysis?.bias} with 
-                    {analysis.media_score?.details?.bias_analysis?.bias_percentage}% intensity
-                  </p>
-                </div>
-              )
-            }}
-          />
+          <div 
+            onClick={() => setSelectedAnalysis('bias')}
+            className={`rounded-lg border p-4 bg-purple-50 border-purple-200 hover:shadow-md transition-shadow relative cursor-pointer ${selectedAnalysis === 'bias' ? 'ring-2 ring-purple-400' : ''}`}
+            title="Measures political bias using keyword analysis"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Bias Analysis</h3>
+            <p className={`text-2xl font-bold ${selectedAnalysis === 'bias' ? 'text-purple-600' : 'text-gray-600'}`}>
+              {scores.biasScore.toFixed(1)}%
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              {scores.biasScore <= 20 ? "Minimal Bias" :
+               scores.biasScore <= 40 ? "Low Bias" :
+               scores.biasScore <= 60 ? "Moderate Bias" :
+               scores.biasScore <= 80 ? "High Bias" :
+               "Extreme Bias"}
+            </p>
+            <p className="text-xs text-gray-400 absolute bottom-2 right-2">Click to analyze</p>
+          </div>
         </div>
       </div>
 
-      {/* Article Content */}
-      <ArticleContent 
-        headline={analysis.headline}
-        content={analysis.content}
-      />
+      {/* Article Content with Analysis Header */}
+      <div className="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+        {selectedAnalysis && (
+          <div className={`mb-4 p-3 rounded-lg ${
+            selectedAnalysis === 'headline' ? 'bg-blue-50 border border-blue-200' :
+            selectedAnalysis === 'evidence' ? 'bg-green-50 border border-green-200' :
+            selectedAnalysis === 'manipulation' ? 'bg-amber-50 border border-amber-200' :
+            'bg-purple-50 border border-purple-200'
+          }`}>
+            <h3 className="font-medium text-gray-900">
+              {selectedAnalysis === 'headline' ? 'Headline Analysis View' :
+               selectedAnalysis === 'evidence' ? 'Evidence-Based Reporting View' :
+               selectedAnalysis === 'manipulation' ? 'Manipulation Detection View' :
+               'Bias Analysis View'}
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              {selectedAnalysis === 'headline' ? 'Analyzing how well the headline matches the content' :
+               selectedAnalysis === 'evidence' ? 'Highlighting sources and evidence in the article' :
+               selectedAnalysis === 'manipulation' ? 'Identifying potentially manipulative language' :
+               'Examining political bias in the content'}
+            </p>
+          </div>
+        )}
+        <ArticleContent 
+          headline={analysis.headline}
+          content={analysis.content}
+          selectedAnalysis={selectedAnalysis}
+          flaggedPhrases={
+            selectedAnalysis === 'headline' 
+              ? analysis.media_score?.details?.headline_analysis?.flagged_phrases || []
+              : selectedAnalysis === 'evidence'
+              ? analysis.media_score?.details?.evidence_analysis?.flagged_phrases || []
+              : selectedAnalysis === 'manipulation'
+              ? analysis.media_score?.details?.sentiment_analysis?.flagged_phrases || []
+              : selectedAnalysis === 'bias'
+              ? analysis.media_score?.details?.bias_analysis?.flagged_phrases || []
+              : []
+          }
+        />
+      </div>
 
       {/* Single Modal instance */}
       {activeModal && modalPosition && (

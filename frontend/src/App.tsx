@@ -18,7 +18,7 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [invalidDomain, setInvalidDomain] = useState<string>('');
 
-  const handleAnalyze = async (url: string) => {
+  const handleAnalyze = async (url: string, useAI: boolean) => {
     setIsLoading(true);
     setIsAnalyzing(true);
     setError(null);
@@ -39,7 +39,8 @@ function App() {
     
     try {
       console.log('Starting analysis for URL:', url);
-      const result = await analyzeArticle(url);
+      console.log('Using AI-powered analysis:', useAI);
+      const result = await analyzeArticle(url, useAI);
       console.log('Analysis result:', result);
       setAnalysis(result);
     } catch (err) {
